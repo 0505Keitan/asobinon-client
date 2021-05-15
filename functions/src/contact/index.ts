@@ -1,8 +1,10 @@
 import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 import { MailJet } from "../lib/mailjet";
 import { AdminConfig } from "../models/admin-config";
 
 const adminConfig = functions.config() as AdminConfig;
+const contactCollectionRef = admin.firestore().collection("contacts");
 
 const contactWithMailjet = functions
   .region("asia-northeast1")
@@ -29,6 +31,24 @@ const contactWithMailjet = functions
       });
     }
     const parsedBody = JSON.parse(body);
+    const timeStamp = admin.firestore.FieldValue.serverTimestamp();
+
+    //IDを生成 https://stackoverflow.com/a/28732840
+    const docId =
+      new Date().toLocaleDateString("ja-JP").replace(/\//g, "-") + "_";
+    Math.random().toString().replace(".", "");
+
+    // firestoreに記録
+    await contactCollectionRef
+      .doc(docId)
+      .set({
+        title: parsedBody.title ?? null,
+        text: parsedBody.text ?? null,
+        email: parsedBody.email.length > 0 ? parsedBody.email : null,
+        timeStamp: timeStamp,
+      })
+      .then(() => functions.logger.info("Data added to firestore"))
+      .catch((e) => functions.logger.error(e));
 
     functions.logger.info("Posting contact mail");
     const noticeOptions = {
@@ -52,7 +72,9 @@ const contactWithMailjet = functions
         if (parsedBody.email.length > 0) {
           const thanksOptions = {
             title: "【Markdown Gaming】お問い合わせについてのご案内",
-            content: `お問い合わせいただきありがとうございます。返信までお時間をいただくかもしれませんが、ご了承ください。\n\nお問い合わせ内容: \n\n---\nイマイク代表 安藤 諒 (Ryo Ando)\nsasigume@gmail.com`,
+            content: `お問い合わせいただきありがとうございます。返信までお時間をいただくかもしれませんが、ご了承ください。\n\nお問い合わせ内容:\n${
+              parsedBody.text ?? ""
+            }\n\nお問い合わせID: ${docId}\n\n---\nイマイク代表 安藤 諒 (Ryo Ando)\nsasigume@gmail.com`,
             from: adminConfig.mail.sender ?? "functions-from-not-set@ima.icu",
             fromName: "Markdown Gaming 運営チーム・お問い合わせ部門",
             to: parsedBody.email,
@@ -66,6 +88,7 @@ const contactWithMailjet = functions
               });
             })
             .catch((e) => {
+              functions.logger.error(e);
               return response.status(500).json({
                 message: `Stringified error: ${JSON.stringify(e)}`,
               });

@@ -23,7 +23,6 @@ export default async function send(
     }
   )
     .then((res) => {
-      console.log(res);
       if (res.ok) {
         return response.status(200).json(res);
       }
