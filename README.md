@@ -1,5 +1,13 @@
-# このフォルダについて
+# MARKDOWN-GAMING-CLIENT
 
-お問い合わせフォームとか、外部との通信が必要なものに関しては、Docusaurusでうまく動きません。
+サーバーレスファンクションを使った、記事の編集とお問合せはこちらに分離しています。
 
-そのため、専用のNext.jsクライアントを用意しました。
+Markdown Gamingの「クライアント」という表記は、サイトの構造としては不正確ですが、「APIと通信する」という意味でつけています。
+
+**開発者へ: npmじゃなくてyarnなので間違えないように。**
+
+## Thank you
+
+### Package to build form with Chakra UI very very easily: `formik-chakra-ui`
+
+https://github.com/kgnugur/formik-chakra-ui
