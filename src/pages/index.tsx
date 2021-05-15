@@ -7,13 +7,10 @@ import { DarkModeSwitch } from "../components/DarkModeSwitch";
 import { CTA } from "../components/CTA";
 import { Footer } from "../components/Footer";
 import ContactForm from "../components/contact/contact-form";
-import Head from "next/head";
+import Layout from "../components/layout";
 
 const Index = () => (
-  <Container height="100vh">
-    <Head>
-      <title>Makrdown Gaming お問い合わせページ</title>
-    </Head>
+  <Layout title="Makrdown Gaming お問い合わせページ">
     <Hero title="お問い合わせページ" />
     <Main>
       <ContactForm />
@@ -24,7 +21,7 @@ const Index = () => (
       <Text>&copy; 2021 imaicu. Released unser MIT License</Text>
     </Footer>
     <CTA />
-  </Container>
+  </Layout>
 );
 
 export default Index;
