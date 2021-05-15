@@ -35,8 +35,9 @@ const contactWithMailjet = functions
 
     //IDを生成 https://stackoverflow.com/a/28732840
     const docId =
-      new Date().toLocaleDateString("ja-JP").replace(/\//g, "-") + "_";
-    Math.random().toString().replace(".", "");
+      new Date().toLocaleDateString("ja-JP").replace(/\//g, "-") +
+      "_" +
+      Math.random().toString().replace(".", "");
 
     // firestoreに記録
     await contactCollectionRef
