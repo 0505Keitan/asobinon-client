@@ -66,13 +66,15 @@ const EditDocsPage = ({ path }: PageProps) => {
             <Heading as="h2" mb={6}>
               GitHub.comで編集する(非推奨)
             </Heading>
-
-            <Box bg="gray.100" p={6} rounded="xl">
-              編集するページ:
-              <LinkChakra isExternal href={actualPath}>
-                <pre>{actualPath}</pre>
-              </LinkChakra>
-            </Box>
+            {/* ブログは日付のせいでバグる */}
+            {path.includes("/docs/") && (
+              <Box bg="gray.100" p={6} rounded="xl">
+                編集するページ:
+                <LinkChakra isExternal href={actualPath}>
+                  <pre>{actualPath}</pre>
+                </LinkChakra>
+              </Box>
+            )}
 
             <Alert mb={8} status="error">
               <AlertIcon />
