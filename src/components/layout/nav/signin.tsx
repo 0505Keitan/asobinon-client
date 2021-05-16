@@ -1,4 +1,3 @@
-import firebase from 'firebase/app';
 import { useAuthentication } from '@/hooks/authentication';
 import firebaseApi from '@/lib/firebase';
 import { Box, Button, Menu, MenuButton, MenuList, MenuItem, Flex } from '@chakra-ui/react';
@@ -7,40 +6,14 @@ import FaiconDiv from '@/components/common/faicon-div';
 import { useRouter } from 'next/router';
 
 const SignInComponent = () => {
-  const orgName = process.env.GITHUB_ORG_NAME;
-
   const { user } = useAuthentication();
   const router = useRouter();
 
   const logout = () => {
     firebaseApi.auth().signOut();
   };
-  const login = () => {
-    //read:orgでorganization参加を判定
-    const provider = new firebase.auth.GithubAuthProvider();
-    provider.addScope('read:org');
-    firebase
-      .auth()
-      .signInWithPopup(provider)
-      .then(async (result) => {
-        const credential = result.credential as firebase.auth.OAuthCredential;
-        const token = credential.accessToken;
-        user.isMemberOfOrg = await fetch(
-          `https://api.github.com/orgs/${orgName}/members/74000913`,
-          {
-            headers: {
-              Authorization: `token ${token}`,
-            },
-          },
-        ).then((res) => res.ok);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-  };
-
   const gotomypage = () => {
-    router.push('/users/me');
+    router.push('/authenticated');
   };
   return (
     <Menu>
@@ -82,13 +55,9 @@ const SignInComponent = () => {
               </Flex>
               {user && (
                 <>
-                  {user.isMemberOfOrg ? (
-                    <MenuItem mb={2} as={Button} colorScheme="cyan" onClick={gotomypage}>
-                      マイページ
-                    </MenuItem>
-                  ) : (
-                    <MenuItem>あなたは組織に所属していません</MenuItem>
-                  )}
+                  <MenuItem mb={2} as={Button} colorScheme="cyan" onClick={gotomypage}>
+                    マイページ
+                  </MenuItem>
                 </>
               )}
               {user ? (
@@ -98,9 +67,9 @@ const SignInComponent = () => {
               ) : (
                 <MenuItem
                   as={Button}
-                  colorScheme="twitter"
-                  leftIcon={<FaiconDiv icon={['fab', 'user']} />}
-                  onClick={login}
+                  colorScheme="gray"
+                  leftIcon={<FaiconDiv icon={['fas', 'user']} />}
+                  onClick={gotomypage}
                 >
                   ログイン
                 </MenuItem>

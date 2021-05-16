@@ -1,17 +1,16 @@
 import firebase from 'firebase/app';
 import { useEffect } from 'react';
 import { atom, useRecoilState } from 'recoil';
-import { UserWithGH } from '@/models/auth/user';
+import { User } from '@/models/auth/user';
 import { SITE_FULL_URL } from '@/lib/constants';
 
-const userState = atom<UserWithGH>({
+const userState = atom<User>({
   key: 'user',
   default: null!,
 });
 
 export function useAuthentication() {
   const [user, setUser] = useRecoilState(userState);
-  const isMember = user?.isMemberOfOrg ?? false;
   useEffect(() => {
     if (user !== null) {
       return;
@@ -26,8 +25,7 @@ export function useAuthentication() {
       }
 
       if (firebaseUser) {
-        const loginUser: UserWithGH = {
-          isMemberOfOrg: isMember,
+        const loginUser: User = {
           uid: firebaseUser.uid,
           isAnonymous: firebaseUser.isAnonymous,
           name: firebaseUser.displayName ?? '未設定',
