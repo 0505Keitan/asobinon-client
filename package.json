@@ -1,10 +1,15 @@
 {
   "name": "markdown-gaming-client",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "prettier:quick": "pretty-quick --staged",
+    "type-check": "tsc",
+    "lint": "eslint src/** --ext .ts,.tsx",
+    "lint:fix": "eslint src/** --ext .ts,.tsx --fix",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.0.5",
@@ -12,19 +17,39 @@
     "@chakra-ui/theme-tools": "1.1.2",
     "@emotion/react": "11.1.5",
     "@emotion/styled": "11.1.5",
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-brands-svg-icons": "^5.15.3",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "dayjs": "^1.10.4",
+    "firebase": "^8.6.1",
     "formik": "^2.2.6",
     "formik-chakra-ui": "^1.4.7",
     "framer-motion": "^4.0.3",
     "next": "latest",
+    "nextjs-progressbar": "^0.0.9",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-gtm-module": "^2.0.11",
+    "recoil": "^0.3.0",
     "yup": "^0.32.9"
   },
   "devDependencies": {
     "@types/node": "^14.6.0",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
-    "typescript": "4.2.3"
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
+    "eslint": "^7.26.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-react": "^7.23.2",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "2.3.0",
+    "typescript": "^4.2.4"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --cache --fix"
+  }
 }
