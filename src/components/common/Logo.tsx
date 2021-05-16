@@ -67,6 +67,7 @@ const Logo = ({ fill = THEME_COLOR, logoSelection }: Props) => {
             <PathSelecter mode={logoSelection} />
           </g>
         </svg>
+        ロゴ制作中、しばし待て！
       </LinkChakra>
     </Box>
   );
