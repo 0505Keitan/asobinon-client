@@ -1,33 +1,26 @@
-import { ButtonGroup } from "@chakra-ui/button";
-import { Box, Code, Stack } from "@chakra-ui/layout";
-import { useToast } from "@chakra-ui/toast";
-import { Formik } from "formik";
-import {
-  InputControl,
-  ResetButton,
-  SubmitButton,
-  TextareaControl,
-} from "formik-chakra-ui";
-import { useState } from "react";
-import * as Yup from "yup";
+import { ButtonGroup } from '@chakra-ui/button';
+import { Box, Code, Stack } from '@chakra-ui/layout';
+import { useToast } from '@chakra-ui/toast';
+import { Formik } from 'formik';
+import { InputControl, ResetButton, SubmitButton, TextareaControl } from 'formik-chakra-ui';
+import { useState } from 'react';
+import * as Yup from 'yup';
 
 export default function ContactForm() {
   const validationSchema = Yup.object({
-    title: Yup.string().required("件名を入力してください。"),
-    text: Yup.string().required("本文を入力してください。"),
-    email: Yup.string()
-      .email("メールアドレスの形式が正しくありません")
-      .optional(),
+    title: Yup.string().required('件名を入力してください。'),
+    text: Yup.string().required('本文を入力してください。'),
+    email: Yup.string().email('メールアドレスの形式が正しくありません').optional(),
   });
   const initialValues = {
-    title: "",
-    text: "",
-    email: "",
+    title: '',
+    text: '',
+    email: '',
   };
   const [fetchState, setFetchState] = useState({
     submitted: false,
     isError: false,
-    message: "",
+    message: '',
   });
 
   const toast = useToast();
@@ -36,10 +29,10 @@ export default function ContactForm() {
     <Formik
       onSubmit={async (values) => {
         await fetch(`${process.env.HTTPS_URL}/api/send`, {
-          method: "POST",
+          method: 'POST',
           body: JSON.stringify(values),
           headers: {
-            Authorization: process.env.FUNCTIONS_AUTH ?? "",
+            Authorization: process.env.FUNCTIONS_AUTH ?? '',
           },
         })
           .then((res) => {
@@ -47,17 +40,17 @@ export default function ContactForm() {
               setFetchState((prevValue) => ({
                 ...prevValue,
                 submitted: true,
-                message: "送信完了",
+                message: '送信完了',
                 isError: false,
               }));
               toast({
-                title: "お問い合わせが送信できました",
-                status: "success",
+                title: 'お問い合わせが送信できました',
+                status: 'success',
               });
             } else {
               toast({
                 title: `送信に失敗しました: ${res.statusText}`,
-                status: "error",
+                status: 'error',
               });
             }
           })
@@ -105,12 +98,10 @@ export default function ContactForm() {
           ) : (
             <Box>
               <Box>送信ありがとうございました。</Box>
-              <Box>受付日時: {new Date().toLocaleString("ja-JP")}</Box>
+              <Box>受付日時: {new Date().toLocaleString('ja-JP')}</Box>
               <Box>送信内容: {values.text}</Box>
               {values.email.length > 0 && (
-                <Box>
-                  返信までお時間をいただく場合がございますが、ご了承ください。
-                </Box>
+                <Box>返信までお時間をいただく場合がございますが、ご了承ください。</Box>
               )}
             </Box>
           )}

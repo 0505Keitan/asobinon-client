@@ -1,6 +1,6 @@
 {
   "name": "markdown-gaming-client",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
@@ -31,12 +31,15 @@
     "formik": "^2.2.6",
     "formik-chakra-ui": "^1.4.7",
     "framer-motion": "^4.0.3",
+    "gray-matter": "^4.0.3",
     "next": "latest",
     "nextjs-progressbar": "^0.0.9",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-gtm-module": "^2.0.11",
     "recoil": "^0.3.0",
+    "remark": "^13.0.0",
+    "remark-html": "^13.0.1",
     "yup": "^0.32.9"
   },
   "devDependencies": {

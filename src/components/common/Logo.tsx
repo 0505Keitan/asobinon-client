@@ -48,8 +48,9 @@ const PathSelecter = ({ mode }: { mode: LogoMode }) => {
 const Logo = ({ fill = THEME_COLOR, logoSelection }: Props) => {
   const { colorMode } = useColorMode();
   let svgProps = {
-    width: 100,
-    viewBox: '0 0 100 100',
+    width: 50,
+    height: 50,
+    viewBox: '0 0 50 50',
   };
   if (logoSelection == null || logoSelection == 'square') {
     svgProps.viewBox = '0 0 100 100';

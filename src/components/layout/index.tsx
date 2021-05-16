@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Box } from '@chakra-ui/react';
 import Meta from './meta';
-import { ASIDE_WITDH, LAYOUT_PADDING, MAIN_WIDTH, NAV_HEIGHT } from '@/theme/index';
+import { ASIDE_WITDH, LAYOUT_PADDING, MAIN_WIDTH } from '@/theme/index';
 import Nav from './nav';
 import LayoutFooter from './layout-footer';
 
@@ -15,7 +15,7 @@ interface LayoutProps {
   revalEnv?: number;
 }
 
-export default function Layout({ children, meta, revalEnv }: LayoutProps) {
+export default function Layout({ children, meta }: LayoutProps) {
   return (
     <>
       {/* OGPの生成 */}
@@ -23,7 +23,7 @@ export default function Layout({ children, meta, revalEnv }: LayoutProps) {
       <Box w="100vw">
         <Nav />
 
-        <Box pt={`${NAV_HEIGHT}px`}>
+        <Box>
           <Box
             ml="auto"
             w={{ base: '100vw', lg: `calc(100vw - ${ASIDE_WITDH + LAYOUT_PADDING}px)` }}
@@ -39,7 +39,7 @@ export default function Layout({ children, meta, revalEnv }: LayoutProps) {
             >
               {children}
             </Box>
-            <LayoutFooter maxW={MAIN_WIDTH} revalidate={revalEnv} />
+            <LayoutFooter maxW={MAIN_WIDTH} />
           </Box>
         </Box>
       </Box>

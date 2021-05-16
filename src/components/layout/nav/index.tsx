@@ -1,28 +1,15 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
-import {
-  Box,
-  Button,
-  CloseButton,
-  Flex,
-  HStack,
-  Spacer,
-  Stack,
-  useColorMode,
-} from '@chakra-ui/react';
-import { ASIDE_WITDH, LAYOUT_PADDING, NAV_HEIGHT } from '@/theme/index';
+import { Box, Button, CloseButton, Flex, HStack, Stack, useColorMode } from '@chakra-ui/react';
+import { ASIDE_WITDH, LAYOUT_PADDING } from '@/theme/index';
 import ColorSwitch from '../color-switch';
 import Logo from '@/components/common/Logo';
 import * as gtag from '@/lib/gtag';
 import SearchBox from '@/components/common/search-box';
 import FaiconDiv from '@/components/common/faicon-div';
+import LinkChakra from '@/components/common/link-chakra';
 
 const SignInComponent = dynamic(() => import('./signin'), { ssr: false });
-
-const layoutSwitch = {
-  search: 'md',
-  logo: 'lg',
-};
 
 // https://dev.to/guimg/hide-menu-when-scrolling-in-reactjs-47bj
 
@@ -93,14 +80,44 @@ export default function Nav() {
             }}
           />
           <Stack flexGrow={1} h="auto">
-            <Stack pb={8} display={{ base: 'none', lg: 'block' }}>
-              <Box pb={6} display={{ base: 'block', [layoutSwitch.logo]: 'none' }}>
+            <Stack spacing={6} pb={8}>
+              <Box pb={6}>
                 <Logo logoSelection="square" />
               </Box>
-
-              <Box display={{ base: 'block', [layoutSwitch.search]: 'none' }}>
+              <ColorSwitch />
+              <Box>
+                <SignInComponent />
+              </Box>
+              <Box>
                 <SearchBox />
               </Box>
+              <Stack spacing={2}>
+                <Button as={LinkChakra} href="/">
+                  トップ
+                </Button>
+                <Button
+                  leftIcon={<FaiconDiv icon={['fas', 'comment-alt']} />}
+                  as={LinkChakra}
+                  href="/contact"
+                >
+                  お問い合わせ
+                </Button>
+
+                <Button
+                  leftIcon={<FaiconDiv icon={['fas', 'book']} />}
+                  as={LinkChakra}
+                  href="/posts/eula"
+                >
+                  利用規約
+                </Button>
+                <Button
+                  leftIcon={<FaiconDiv icon={['fas', 'user']} />}
+                  as={LinkChakra}
+                  href="/posts/privacy-policy"
+                >
+                  プライバシーポリシー
+                </Button>
+              </Stack>
             </Stack>
           </Stack>
         </Flex>
@@ -109,16 +126,12 @@ export default function Nav() {
       {/* これが上のメニュー */}
       <Box
         zIndex={5}
-        bg={colorMode == 'light' ? 'white' : '#1A202C'}
-        h={`${NAV_HEIGHT}px`}
         top={0}
         left={0}
+        pt={1}
         as="nav"
         w="100vw"
-        pt="0.4rem"
-        pb="0.1rem"
-        borderBottom="gray.400"
-        borderBottomWidth={2}
+        alignItems="center"
         position="fixed"
       >
         <HStack
@@ -144,16 +157,6 @@ export default function Nav() {
               }
             }}
           />
-          <Box pr={4} display={{ base: 'none', [layoutSwitch.logo]: 'block' }}>
-            <Logo logoSelection="square" />
-          </Box>
-          <ColorSwitch /> <Spacer />
-          <Box>
-            <SignInComponent />
-          </Box>
-          <Box display={{ base: 'none', [layoutSwitch.search]: 'block' }}>
-            <SearchBox />
-          </Box>
         </HStack>
       </Box>
     </>

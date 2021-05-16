@@ -2,7 +2,6 @@ import { Button } from '@chakra-ui/button';
 import {
   Box,
   Code,
-  Divider,
   Heading,
   Stack,
   Alert,
@@ -48,7 +47,6 @@ const EditDocsPage = ({ path }: PageProps) => {
     return (
       <Layout meta={{ title: title, desc: '編集支援ページ' }}>
         <Heading as="h1">{title}</Heading>
-        <Divider my={8} />
 
         <Tabs>
           <TabList>
