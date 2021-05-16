@@ -1,14 +1,19 @@
 {
   "name": "markdown-gaming-client",
   "version": "0.0.6",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start",
     "prettier:quick": "pretty-quick --staged",
     "type-check": "tsc",
-    "lint": "eslint src/** --ext .ts,.tsx",
-    "lint:fix": "eslint src/** --ext .ts,.tsx --fix",
+    "lint": "eslint --no-error-on-unmatched-pattern src/** --ext .ts,.tsx",
+    "lint:fix": "eslint --no-error-on-unmatched-pattern  src/** --ext .ts,.tsx --fix",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -42,6 +47,7 @@
     "@typescript-eslint/parser": "^4.23.0",
     "eslint": "^7.26.0",
     "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",

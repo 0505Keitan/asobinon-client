@@ -27,6 +27,6 @@
       "@/theme/*": ["theme/*"]
     }
   },
-  "exclude": ["node_modules"],
+  "exclude": ["./node_modules", "./functions"],
   "include": ["**/*.ts", "**/*.tsx"]
 }
