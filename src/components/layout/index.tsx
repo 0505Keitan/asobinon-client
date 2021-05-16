@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import Meta from './meta';
 import { ASIDE_WITDH, LAYOUT_PADDING, MAIN_WIDTH } from '@/theme/index';
 import Nav from './nav';
@@ -23,25 +23,26 @@ export default function Layout({ children, meta }: LayoutProps) {
       <Box w="100vw">
         <Nav />
 
-        <Box>
+        <Flex
+          minH="100vh"
+          ml="auto"
+          w={{ base: '100vw', lg: `calc(100vw - ${ASIDE_WITDH + LAYOUT_PADDING}px)` }}
+          flexDirection="column"
+        >
           <Box
-            ml="auto"
-            w={{ base: '100vw', lg: `calc(100vw - ${ASIDE_WITDH + LAYOUT_PADDING}px)` }}
+            as="main"
+            mx="auto"
+            pt={8}
+            pb={8}
+            overflowX="hidden"
+            w={{ base: 'full', lg: `${MAIN_WIDTH}px` }}
+            px={{ base: 3, lg: 0 }}
+            flexGrow={1}
           >
-            <Box
-              as="main"
-              mx="auto"
-              pt={8}
-              pb={8}
-              overflowX="hidden"
-              w={{ base: 'full', lg: `${MAIN_WIDTH}px` }}
-              px={{ base: 3, lg: 0 }}
-            >
-              {children}
-            </Box>
-            <LayoutFooter maxW={MAIN_WIDTH} />
+            {children}
           </Box>
-        </Box>
+          <LayoutFooter maxW={MAIN_WIDTH} />
+        </Flex>
       </Box>
     </>
   );
