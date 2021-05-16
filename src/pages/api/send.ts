@@ -1,27 +1,21 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function send(
-  request: NextApiRequest,
-  response: NextApiResponse
-) {
+export default async function send(request: NextApiRequest, response: NextApiResponse) {
   const secret = request.headers.authorization as string | undefined;
 
   if (!secret || secret !== process.env.FUNCTIONS_AUTH) {
     return response.status(401).json({
-      message: "Invalid token",
+      message: 'Invalid token',
     });
   }
 
-  return await fetch(
-    `${process.env.FUNCTIONS_URL}/contact-contactWithMailjet`,
-    {
-      method: "POST",
-      body: request.body ?? "",
-      headers: {
-        Authorization: secret,
-      },
-    }
-  )
+  return await fetch(`${process.env.FUNCTIONS_URL}/contact-contactWithMailjet`, {
+    method: 'POST',
+    body: request.body ?? '',
+    headers: {
+      Authorization: secret,
+    },
+  })
     .then((res) => {
       if (res.ok) {
         return response.status(200).json(res);

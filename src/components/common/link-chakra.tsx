@@ -1,8 +1,8 @@
 //https://zenn.dev/66ed3gs/articles/9f5a33c775842c
 
-import React from "react";
-import NextLink from "next/link";
-import { Link, LinkProps } from "@chakra-ui/react";
+import React from 'react';
+import NextLink from 'next/link';
+import { Link, LinkProps } from '@chakra-ui/react';
 
 interface LinkChakraProps extends LinkProps {
   isUnderline?: boolean;
@@ -10,9 +10,9 @@ interface LinkChakraProps extends LinkProps {
 
 const LinkChakra: React.FC<LinkChakraProps> = (props) => {
   let textDec;
-  props.isUnderline == true ? (textDec = "underline") : (textDec = "none");
+  props.isUnderline == true ? (textDec = 'underline') : (textDec = 'none');
   return (
-    <NextLink href={props.href ?? ""}>
+    <NextLink href={props.href ?? ''}>
       <Link
         {...props}
         style={{ textDecoration: textDec }}
