@@ -1,3 +1,4 @@
+import CreateIssue from '@/components/common/create-issue';
 import { Button } from '@chakra-ui/button';
 import {
   Box,
@@ -50,26 +51,14 @@ const EditDocsPage = ({ path }: PageProps) => {
 
         <Tabs>
           <TabList>
-            <Tab>ローカルで編集</Tab>
-            <Tab>GitHubで編集</Tab>
+            <Tab>メンバーじゃない方</Tab>
+            <Tab>メンバーの方</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Heading as="h2" mb={6}>
-                クローンする(推奨)
-              </Heading>
-              <Box>
-                <Code>$ git clone {repoUrl}.git</Code>
-              </Box>
-              <Box>
-                <Box>変更したらプッシュ:</Box>
-                <Code>$ git push origin main</Code>
-              </Box>
-            </TabPanel>
-            <TabPanel>
               <Stack spacing={6}>
                 <Heading as="h2" mb={6}>
-                  GitHub.comで編集する(非推奨)
+                  GitHub.comで編集する
                 </Heading>
                 {/* ブログは日付のせいでバグる */}
                 {path.includes('/docs/') && (
@@ -83,15 +72,51 @@ const EditDocsPage = ({ path }: PageProps) => {
 
                 <Alert mb={8} status="error">
                   <AlertIcon />
-                  <AlertTitle mr={2}>何回も変更する場合はクローンしてください!</AlertTitle>
+                  <AlertTitle mr={2}>短時間に何回も編集しないでね!</AlertTitle>
                   <AlertDescription>
-                    直接変更すると、その度にサイト全体の更新がされ、サーバーに負荷がかかります。
+                    何度もGitHub.comで編集すると、その度にサイト全体の更新がされ、サーバーに負荷がかかります。
                   </AlertDescription>
                 </Alert>
 
-                <Button as={LinkChakra} isExternal href={editPath}>
+                <Button colorScheme="blue" as={LinkChakra} isExternal href={editPath}>
                   GitHub.comで編集する
                 </Button>
+              </Stack>
+            </TabPanel>
+            <TabPanel>
+              <Stack spacing={6}>
+                <Heading as="h2" mb={6}>
+                  クローンする(メンバーの方)
+                </Heading>
+                <Stack mb={6}>
+                  <Alert mb={8} status="info">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>メンバー参加は下のボタンを押してください</AlertTitle>
+                    <AlertDescription>
+                      「Submit new issue」を押して送信するのを忘れずに！
+                    </AlertDescription>
+                  </Alert>
+                  <CreateIssue
+                    colorScheme="green"
+                    text="メンバー参加を申請する"
+                    issue={{ title: 'メンバー参加を申請します', body: '(補助サイトより作成)' }}
+                  />
+                </Stack>
+                <Stack spacing={6} mb={6}>
+                  <Heading as="h3">クローンとプッシュ</Heading>
+                  <Box textDecoration="underline">
+                    <a target="_blank" href="https://www.youtube.com/watch?v=VZVZUA3MW1g">
+                      こちらの動画で解説しています
+                    </a>
+                  </Box>
+                  <Box>
+                    <Code>$ git clone {repoUrl}.git</Code>
+                  </Box>
+                  <Box>
+                    <Box>変更したらプッシュ:</Box>
+                    <Code>$ git push origin main</Code>
+                  </Box>
+                </Stack>
               </Stack>
             </TabPanel>
           </TabPanels>

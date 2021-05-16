@@ -5,9 +5,9 @@ import { ASIDE_WITDH, LAYOUT_PADDING } from '@/theme/index';
 import ColorSwitch from '../color-switch';
 import Logo from '@/components/common/Logo';
 import * as gtag from '@/lib/gtag';
-import SearchBox from '@/components/common/search-box';
 import FaiconDiv from '@/components/common/faicon-div';
 import LinkChakra from '@/components/common/link-chakra';
+import CreateIssue from '@/components/common/create-issue';
 
 const SignInComponent = dynamic(() => import('./signin'), { ssr: false });
 
@@ -80,7 +80,7 @@ export default function Nav() {
             }}
           />
           <Stack flexGrow={1} h="auto">
-            <Stack spacing={6} pb={8}>
+            <Stack spacing={6} pb={8} w="full">
               <Box pb={6}>
                 <Logo logoSelection="square" />
               </Box>
@@ -88,9 +88,9 @@ export default function Nav() {
               <Box>
                 <SignInComponent />
               </Box>
-              <Box>
-                <SearchBox />
-              </Box>
+
+              <CreateIssue />
+
               <Stack spacing={2}>
                 <Button as={LinkChakra} href="/">
                   トップ
