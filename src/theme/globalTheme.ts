@@ -1,7 +1,6 @@
 import { createBreakpoints } from '@chakra-ui/theme-tools';
 
 export const globalLayout = {
-  navHeight: 56,
   asideWitdh: 300,
   mainWidth: 600,
   layoutPadding: 30,
@@ -62,6 +61,39 @@ const globalTheme = {
       fontWeight: 'semibold',
       lineHeight: '110%',
       letterSpacing: '-1%',
+    },
+  },
+  styles: {
+    global: {
+      p: {
+        marginTop: '1rem',
+        marginBottom: '1.4rem',
+      },
+      'h1,h2,h3,h4': {
+        marginTop: '1.8rem',
+        marginBottom: '1.4rem',
+        fontSize: '1.4rem',
+      },
+      h2: {
+        fontSize: '2rem',
+      },
+      h3: {
+        fontSize: '1.7rem',
+      },
+      'ul,ol': {
+        marginLeft: '1.4rem',
+      },
+      ul: {
+        listStyle: 'disc',
+      },
+      li: {
+        marginBottom: '0.4rem',
+      },
+      'li>ul, li>ol': {
+        marginTop: '1rem',
+        marginBottom: '1.4rem',
+        marginLeft: '2.6rem',
+      },
     },
   },
 };
