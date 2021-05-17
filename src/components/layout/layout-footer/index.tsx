@@ -17,7 +17,7 @@ const LayoutFooter = ({ maxW }: FooterProps) => {
           px={{ base: 3, lg: 0 }}
         >
           <Box color="white">
-            <Box mb={3}>これは「Markdown Gaming」の編集補助を担うWebアプリケーションです</Box>
+            <Box mb={3}>これは「ASOBINON」の編集補助を担うWebアプリケーションです</Box>
             <Stack direction="column">
               <Box>
                 <Badge maxW="20rem" whiteSpace="nowrap" textTransform="none" isTruncated>
