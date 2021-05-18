@@ -3,5 +3,5 @@ export interface UserImage {
   src: string;
   filename: string;
   uploadedTimeStamp: firebase.firestore.FieldValue;
-  nsfw: boolean;
+  nsfw: 0 | 1 | 2 | 3;
 }
