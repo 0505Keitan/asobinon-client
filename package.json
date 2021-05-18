@@ -1,6 +1,6 @@
 {
   "name": "asobinon-client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
@@ -40,6 +40,7 @@
     "recoil": "^0.3.0",
     "remark": "^13.0.0",
     "remark-html": "^13.0.1",
+    "uuid": "^8.3.2",
     "yup": "^0.32.9"
   },
   "devDependencies": {
