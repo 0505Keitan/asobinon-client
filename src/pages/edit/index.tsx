@@ -105,7 +105,11 @@ const EditDocsPage = ({ path }: PageProps) => {
                 <Stack spacing={6} mb={6}>
                   <Heading as="h3">クローンとプッシュ</Heading>
                   <Box textDecoration="underline">
-                    <a target="_blank" href="https://www.youtube.com/watch?v=VZVZUA3MW1g">
+                    <a
+                      target="_blank"
+                      href="https://www.youtube.com/watch?v=VZVZUA3MW1g"
+                      rel="noreferrer"
+                    >
                       こちらの動画で解説しています
                     </a>
                   </Box>

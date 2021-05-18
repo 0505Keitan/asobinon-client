@@ -1,13 +1,13 @@
 {
   "name": "asobinon-client",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 3001",
     "build": "next build",
     "start": "next start",
     "prettier:quick": "pretty-quick --staged",
