@@ -2,6 +2,8 @@
 /// <reference types="next/types/global" />
 
 declare module 'react-gtm-module';
+declare module 'react-firebase-file-uploader';
+declare module 'uuid';
 
 // https://sunday-morning.app/posts/2020-12-09-nextjs-google-analytics
 interface Window {
