@@ -49,6 +49,13 @@ const EditDocsPage = ({ path }: PageProps) => {
       <Layout meta={{ title: title, desc: '編集支援ページ' }}>
         <Heading as="h1">{title}</Heading>
 
+        <Box my={6}>
+          <Heading as="h2">画像アップはこちら</Heading>
+          <Button as={LinkChakra} href="/authenticated/images/upload">
+            画像アップローダーへ
+          </Button>
+        </Box>
+
         <Tabs>
           <TabList>
             <Tab>メンバーじゃない方</Tab>
