@@ -1,4 +1,3 @@
-// @flow
 import addToBlobPolyfill from './polyfill';
 
 export default function resizeAndCropImage(file: File, w: number): Promise<Blob> {

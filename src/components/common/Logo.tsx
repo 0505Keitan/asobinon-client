@@ -1,3 +1,4 @@
+import { SITE_NAME } from '@/lib/constants';
 import { THEME_COLOR } from '@/theme/index';
 import { Box, useColorMode } from '@chakra-ui/react';
 import LinkChakra from './link-chakra';
@@ -48,8 +49,9 @@ const PathSelecter = ({ mode }: { mode: LogoMode }) => {
 const Logo = ({ fill = THEME_COLOR, logoSelection }: Props) => {
   const { colorMode } = useColorMode();
   let svgProps = {
-    width: 50,
-    height: 50,
+    //width: 50,
+    width: 0,
+    //height: 50,
     viewBox: '0 0 50 50',
   };
   if (logoSelection == null || logoSelection == 'square') {
@@ -60,14 +62,14 @@ const Logo = ({ fill = THEME_COLOR, logoSelection }: Props) => {
   }
 
   return (
-    <Box area-label="ロゴ" fontWeight="bold" fontSize="1.8rem">
-      <LinkChakra href={'/'} display="flex" gridGap="0.3rem">
+    <Box area-label="ロゴ" fontWeight="bold" fontSize="1.6rem">
+      <LinkChakra href={'/'} display="flex">
         <svg {...svgProps}>
           <g fill={colorMode == 'light' ? fill : 'white'}>
             <PathSelecter mode={logoSelection} />
           </g>
         </svg>
-        ロゴ制作中、しばし待て！
+        {SITE_NAME}
       </LinkChakra>
     </Box>
   );

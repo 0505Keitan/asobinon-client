@@ -3,7 +3,7 @@ import Layout from '@/components/layout';
 import { Box } from '@chakra-ui/react';
 
 import UserUploader from '@/components/authenticated/user-uploader';
-export default function UploafPage() {
+export default function UploadPage() {
   const { user } = useAuthentication();
 
   return (
