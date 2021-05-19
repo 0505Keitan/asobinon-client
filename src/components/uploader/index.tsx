@@ -7,7 +7,7 @@ Thank you for awesome package!
 
 import React, { Component } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import resizeAndCropImage from './image';
+// import resizeAndCropImage from './image';
 
 const generateRandomFilename = (): string => uuidv4();
 

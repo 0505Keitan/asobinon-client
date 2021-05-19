@@ -3,7 +3,7 @@ import firebase from '@/lib/firebase';
 import 'firebase/storage';
 import 'firebase/firestore';
 
-import { Box, Stack, Input, Badge, Code } from '@chakra-ui/react';
+import { Box, Stack, Input, Badge } from '@chakra-ui/react';
 import ImgToMarkdown from '@/components/common/img-to-markdown';
 
 import { Formik } from 'formik';

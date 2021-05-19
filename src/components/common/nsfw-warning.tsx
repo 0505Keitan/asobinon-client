@@ -4,13 +4,6 @@ import { Box, Stack } from '@chakra-ui/react';
 import LinkChakra from './link-chakra';
 
 const NsfwWarning = ({ nsfw }: { nsfw: NsfwLevel }) => {
-  let bg = 'red.500';
-  if (nsfw > 1) {
-    bg = 'red.700';
-  }
-  if (nsfw > 1) {
-    bg = 'red.900';
-  }
   return (
     <Stack
       bg={nsfwColor(nsfw ?? 0)}
