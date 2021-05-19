@@ -11,7 +11,6 @@ export default function ImgToMarkdown({ src, alt }: { src: string; alt: string }
   };
   return (
     <Stack spacing={6}>
-      <img src={src} />
       <Stack spacing={4}>
         <Box>これをコピーして記事に貼ってください。</Box>
         <Code p={3} lang="md">
