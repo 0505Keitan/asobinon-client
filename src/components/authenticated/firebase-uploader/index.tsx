@@ -1,7 +1,7 @@
 import React from 'react';
-import FirebaseFileUploaderModifiedBySasigume from './index';
+import FirebaseFileUploaderModifiedBySasigume from './uploader';
 
-import type { Props as UploaderProps } from './index';
+import type { Props as UploaderProps } from './uploader';
 import { Button } from '@chakra-ui/button';
 
 type Props = UploaderProps & {

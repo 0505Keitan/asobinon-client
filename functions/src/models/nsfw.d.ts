@@ -23,8 +23,16 @@ export type NsfwResult = {
   level: NsfwLevel;
 };
 
-export interface NsfwFunctionResult {
-  messages: string[];
-  level: NsfwLevel;
-  searched: string;
+export interface ApiResult {
+  adult: NsfwType;
+  spoof: NsfwType;
+  medical: NsfwType;
+  violence: NsfwType;
+  racy: NsfwType;
+  adultConfidence: number;
+  spoofConfidence: number;
+  medicalConfidence: number;
+  violenceConfidence: number;
+  racyConfidence: number;
+  nsfwConfidence: number;
 }

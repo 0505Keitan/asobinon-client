@@ -10,12 +10,9 @@ import { Formik } from 'formik';
 import { CheckboxControl } from 'formik-chakra-ui';
 import * as Yup from 'yup';
 import Warning from '@/components/common/warning';
-import { UserImage } from '@/models/firestore/user';
-import CustomUploadButton from '@/components/uploader/customUploadButton';
-import nsfwChecker from './nsfw-checker';
+import CustomUploadButton from '@/components/authenticated/firebase-uploader';
 import NsfwWarning from '@/components/common/nsfw-warning';
-import { NsfwLevel, NsfwResult } from '@/models/nsfw';
-import NsfwDetailBox from './nsfw-detail-box';
+import { NsfwFunctionResult } from '@/models/nsfw';
 import { nsfwColor } from '@/lib/nsfw-color';
 
 interface UploadStateType {
@@ -28,8 +25,8 @@ interface UploadStateType {
   registered: boolean;
   altRegistered: string;
   error?: string;
-  nsfw?: NsfwLevel;
-  nsfwDetail?: NsfwResult['detail'];
+  nsfw?: NsfwFunctionResult['level'];
+  nsfwMessages?: NsfwFunctionResult['messages'];
 }
 
 export default function UserUploader({ uid }: { uid: string }) {
@@ -55,96 +52,80 @@ export default function UserUploader({ uid }: { uid: string }) {
   const uploadRef = (username: string) => `images/userupload/${username}`;
 
   const handleUploadStart = () =>
-    setUploadState((prev) => ({ ...prev, isUploading: true, progress: 0 }));
+    setUploadState((prev) => ({
+      ...prev,
+      isUploading: true,
+      progress: 0,
+      error: undefined,
+    }));
   const handleProgress = (progress: number) => setUploadState((prev) => ({ ...prev, progress }));
   const handleUploadError = (error: any) => {
-    setUploadState((prev) => ({ ...prev, isUploading: false }));
+    setUploadState((prev) => ({
+      ...prev,
+      isUploading: false,
+      error: `容量が5MBを超えているか、運営の設定ミスです`,
+    }));
     console.error(error);
   };
   const handleUploadSuccess = (filename: string) => {
-    if (uid) {
-      const userRef = firebase.firestore().collection('users').doc(uid);
-      const userSubCollectionRef = userRef.collection('images');
-      setUploadState((prev) => ({
-        ...prev,
-        filename: filename,
-        progress: 100,
-        isUploading: false,
-      }));
-      firebase
-        .storage()
-        .ref(uploadRef(uid))
-        .child(filename)
-        .getDownloadURL()
-        .then(async (url) => {
-          // nsfwチェック
-          await nsfwChecker(url).then((result) => {
-            if (typeof result.level === 'number') {
-              setUploadState((prev) => ({
-                ...prev,
-                result: url,
-                nsfw: result.level,
-                nsfwDetail: result.detail,
-              }));
-              const userData = {
-                // 上はNSFW枚数、下は累計NSFWレベル
-                picCount: firebase.firestore.FieldValue.increment(1),
-                nsfwPicCount: firebase.firestore.FieldValue.increment(result.level > 0 ? 1 : 0),
-                nsfwLevelCount: firebase.firestore.FieldValue.increment(result.level),
-              };
-              const registerData: UserImage = {
-                alt: uploadState.altToUpload.length == 0 ? null : uploadState.altToUpload,
-                filename: filename,
-                src: url,
-                uploadedTimeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-                nsfw: result.level,
-              };
-              userRef
-                .set(userData, { merge: true })
-                .then(() => {
-                  userSubCollectionRef
-                    .add(registerData)
-                    .then(() => {
-                      setUploadState((prev) => ({
-                        ...prev,
-                        registered: true,
-                        altRegistered: prev.altToUpload,
-                        error: undefined,
-                      }));
-                    })
-                    .catch((e) => {
-                      setUploadState((prev) => ({
-                        ...prev,
-                        error: prev.error + `データ登録ができませんでした: ${e}`,
-                      }));
-                    });
-                })
-                .catch((e) => {
-                  setUploadState((prev) => ({
-                    ...prev,
-                    error: prev.error + `データ登録ができませんでした: ${e}`,
-                  }));
-                });
-            } else {
-              setUploadState((prev) => ({
-                ...prev,
-                error: prev.error + 'NSFW判定ができませんでした',
-              }));
-            }
+    setUploadState((prev) => ({
+      ...prev,
+      filename: filename,
+      progress: 100,
+      isUploading: false,
+    }));
+    firebase
+      .storage()
+      .ref(uploadRef(uid))
+      .child(filename)
+      .getDownloadURL()
+      .then(async (url) => {
+        // nsfwチェック
+        const body = {
+          src: url,
+          alt: uploadState.altToUpload ?? null,
+          uid: uid,
+        };
+
+        const result: NsfwFunctionResult = await fetch(
+          `${process.env.HTTPS_URL}/api/check-image-v2`,
+          {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+              Authorization: process.env.FUNCTIONS_AUTH ?? '',
+            },
+          },
+        )
+          .then((res) => {
+            return res.json();
+          })
+          .catch((e) => {
+            console.error(e);
+            setUploadState((prev) => ({
+              ...prev,
+              error: `NSFW判定できませんでした: ${e}`,
+            }));
           });
-        })
-        .catch((e) => {
+        console.log(`SEARCHED: ${result.searched}`);
+        if (result.level != undefined) {
           setUploadState((prev) => ({
             ...prev,
-            error: prev.error + `アップロードができませんでした: ${e}`,
+            result: url,
+            nsfw: result.level,
+            nsfwMessages: result.messages,
+            registered: true,
+            altToUpload: '',
+            altRegistered: prev.altToUpload,
+            error: undefined,
           }));
-        });
-    } else {
-      setUploadState((prev) => ({
-        ...prev,
-        error: prev.error + `ログインしてください`,
-      }));
-    }
+        } else {
+          setUploadState((prev) => ({
+            ...prev,
+            error: 'NSFW判定ができませんでした',
+          }));
+        }
+      });
   };
 
   return (
@@ -213,12 +194,18 @@ export default function UserUploader({ uid }: { uid: string }) {
                       </Stack>
                     </Stack>
                   )}
-                  {uploadState.nsfwDetail && <NsfwDetailBox detail={uploadState.nsfwDetail} />}
+                  {uploadState.nsfwMessages && (
+                    <Badge colorScheme={nsfwColor(uploadState.nsfw ?? 0)}>
+                      {uploadState.nsfwMessages.join('、')}
+                    </Badge>
+                  )}
                 </>
               )}
             </>
           )}
-          {uploadState.error && <Badge colorScheme="red">{uploadState.error}</Badge>}
+          {uploadState.error && (
+            <Badge colorScheme="red">{JSON.stringify(uploadState.error)}</Badge>
+          )}
         </Stack>
       )}
     </Formik>
