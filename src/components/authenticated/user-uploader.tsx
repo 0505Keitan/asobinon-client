@@ -58,7 +58,7 @@ export default function UserUploader({ uid }: { uid: string }) {
     setUploadState((prev) => ({ ...prev, isUploading: true, progress: 0 }));
   const handleProgress = (progress: number) => setUploadState((prev) => ({ ...prev, progress }));
   const handleUploadError = (error: any) => {
-    setUploadState((prev) => ({ ...prev, isUploading: false }));
+    setUploadState((prev) => ({ ...prev, isUploading: false, error: error }));
     console.error(error);
   };
   const handleUploadSuccess = (filename: string) => {
@@ -77,61 +77,68 @@ export default function UserUploader({ uid }: { uid: string }) {
         .child(filename)
         .getDownloadURL()
         .then(async (url) => {
-          // nsfwチェック
-          await nsfwChecker(url).then((result) => {
-            if (typeof result.level === 'number') {
-              setUploadState((prev) => ({
-                ...prev,
-                result: url,
-                nsfw: result.level,
-                nsfwDetail: result.detail,
-              }));
-              const userData = {
-                // 上はNSFW枚数、下は累計NSFWレベル
-                picCount: firebase.firestore.FieldValue.increment(1),
-                nsfwPicCount: firebase.firestore.FieldValue.increment(result.level > 0 ? 1 : 0),
-                nsfwLevelCount: firebase.firestore.FieldValue.increment(result.level),
-              };
-              const registerData: UserImage = {
-                alt: uploadState.altToUpload.length == 0 ? null : uploadState.altToUpload,
-                filename: filename,
-                src: url,
-                uploadedTimeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-                nsfw: result.level,
-              };
-              userRef
-                .set(userData, { merge: true })
-                .then(() => {
-                  userSubCollectionRef
-                    .add(registerData)
-                    .then(() => {
-                      setUploadState((prev) => ({
-                        ...prev,
-                        registered: true,
-                        altRegistered: prev.altToUpload,
-                        error: undefined,
-                      }));
-                    })
-                    .catch((e) => {
-                      setUploadState((prev) => ({
-                        ...prev,
-                        error: prev.error + `データ登録ができませんでした: ${e}`,
-                      }));
-                    });
-                })
-                .catch((e) => {
-                  setUploadState((prev) => ({
-                    ...prev,
-                    error: prev.error + `データ登録ができませんでした: ${e}`,
-                  }));
-                });
-            } else {
-              setUploadState((prev) => ({
-                ...prev,
-                error: prev.error + 'NSFW判定ができませんでした',
-              }));
-            }
-          });
+          if (url) {
+            // nsfwチェック
+            await nsfwChecker(url).then((result) => {
+              if (typeof result.level === 'number') {
+                setUploadState((prev) => ({
+                  ...prev,
+                  result: url,
+                  nsfw: result.level,
+                  nsfwDetail: result.detail,
+                }));
+                const userData = {
+                  // 上はNSFW枚数、下は累計NSFWレベル
+                  picCount: firebase.firestore.FieldValue.increment(1),
+                  nsfwPicCount: firebase.firestore.FieldValue.increment(result.level > 0 ? 1 : 0),
+                  nsfwLevelCount: firebase.firestore.FieldValue.increment(result.level),
+                };
+                const registerData: UserImage = {
+                  alt: uploadState.altToUpload.length == 0 ? null : uploadState.altToUpload,
+                  filename: filename,
+                  src: url,
+                  uploadedTimeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  nsfw: result.level,
+                };
+                userRef
+                  .set(userData, { merge: true })
+                  .then(() => {
+                    userSubCollectionRef
+                      .add(registerData)
+                      .then(() => {
+                        setUploadState((prev) => ({
+                          ...prev,
+                          registered: true,
+                          altRegistered: prev.altToUpload,
+                          error: undefined,
+                        }));
+                      })
+                      .catch((e) => {
+                        setUploadState((prev) => ({
+                          ...prev,
+                          error: prev.error + `データ登録ができませんでした: ${e}`,
+                        }));
+                      });
+                  })
+                  .catch((e) => {
+                    setUploadState((prev) => ({
+                      ...prev,
+                      error: prev.error + `データ登録ができませんでした: ${e}`,
+                    }));
+                  });
+              } else {
+                setUploadState((prev) => ({
+                  ...prev,
+                  error: prev.error + 'NSFW判定ができませんでした',
+                }));
+              }
+            });
+          } else {
+            setUploadState((prev) => ({
+              ...prev,
+              error: prev.error + `アップロードができませんでした`,
+            }));
+          }
         })
         .catch((e) => {
           setUploadState((prev) => ({
@@ -218,7 +225,9 @@ export default function UserUploader({ uid }: { uid: string }) {
               )}
             </>
           )}
-          {uploadState.error && <Badge colorScheme="red">{uploadState.error}</Badge>}
+          {uploadState.error && (
+            <Badge colorScheme="red">{JSON.stringify(uploadState.error)}</Badge>
+          )}
         </Stack>
       )}
     </Formik>
