@@ -42,7 +42,7 @@ export default function UserImageList({
   return (
     <Stack spacing={6}>
       {images.map((image) => (
-        <Image key={image.filename} image={image} viewerUid={viewerUid} />
+        <Image key={image.src} image={image} viewerUid={viewerUid} />
       ))}
     </Stack>
   );

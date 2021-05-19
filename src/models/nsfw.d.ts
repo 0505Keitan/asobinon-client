@@ -26,4 +26,5 @@ export type NsfwResult = {
 export interface NsfwFunctionResult {
   messages: string[];
   level: NsfwLevel;
+  searched: string;
 }
