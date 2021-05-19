@@ -1,4 +1,4 @@
-import { Badge, Box } from '@chakra-ui/layout';
+import { Badge, Box } from '@chakra-ui/react';
 import firebase from 'firebase/app';
 import { GetServerSidePropsContext } from 'next';
 import Layout from '../../components/layout';

@@ -34,7 +34,6 @@ export default async function checkImage(request: NextApiRequest, response: Next
       .then(async (res) => {
         if (res.ok) {
           const result = await res.json();
-          console.debug(result);
           return response.status(200).json(result);
         }
         return response.status(res.status).json({ message: res.statusText });

@@ -1,5 +1,5 @@
 import { ButtonGroup } from '@chakra-ui/button';
-import { Box, Code, Stack } from '@chakra-ui/layout';
+import { Box, Code, Stack } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/toast';
 import { Formik } from 'formik';
 import { InputControl, ResetButton, SubmitButton, TextareaControl } from 'formik-chakra-ui';

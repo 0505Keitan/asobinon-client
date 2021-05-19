@@ -2,7 +2,7 @@ import Layout from '@/components/layout';
 import PostCompact from '@/components/posts/compact';
 import { getSortedPostsData } from '@/lib/markdown';
 import { Post } from '@/models/markdown';
-import { Stack } from '@chakra-ui/layout';
+import { Stack } from '@chakra-ui/react';
 
 export default function MdIndex({ allPostsData }: { allPostsData: Post[] }) {
   return (

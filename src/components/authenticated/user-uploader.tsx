@@ -3,7 +3,7 @@ import firebase from '@/lib/firebase';
 import 'firebase/storage';
 import 'firebase/firestore';
 
-import { Box, Stack, Input, Badge } from '@chakra-ui/react';
+import { Box, Stack, Input, Badge, Code } from '@chakra-ui/react';
 import ImgToMarkdown from '@/components/common/img-to-markdown';
 
 import { Formik } from 'formik';
@@ -14,6 +14,9 @@ import { UserImage } from '@/models/firestore/user';
 import CustomUploadButton from '@/components/uploader/customUploadButton';
 import nsfwChecker from './nsfw-checker';
 import NsfwWarning from '@/components/common/nsfw-warning';
+import { NsfwLevel, NsfwResult } from '@/models/nsfw';
+import NsfwDetailBox from './nsfw-detail-box';
+import { nsfwColor } from '@/lib/nsfw-color';
 
 interface UploadStateType {
   altToUpload: string;
@@ -25,7 +28,8 @@ interface UploadStateType {
   registered: boolean;
   altRegistered: string;
   error?: string;
-  nsfw?: 0 | 1 | 2 | 3;
+  nsfw?: NsfwLevel;
+  nsfwDetail?: NsfwResult['detail'];
 }
 
 export default function UserUploader({ uid }: { uid: string }) {
@@ -74,21 +78,26 @@ export default function UserUploader({ uid }: { uid: string }) {
         .getDownloadURL()
         .then(async (url) => {
           // nsfwチェック
-          await nsfwChecker(url).then((nsfw) => {
-            if (nsfw !== null) {
-              setUploadState((prev) => ({ ...prev, result: url, nsfw: nsfw }));
+          await nsfwChecker(url).then((result) => {
+            if (typeof result.level === 'number') {
+              setUploadState((prev) => ({
+                ...prev,
+                result: url,
+                nsfw: result.level,
+                nsfwDetail: result.detail,
+              }));
               const userData = {
                 // 上はNSFW枚数、下は累計NSFWレベル
                 picCount: firebase.firestore.FieldValue.increment(1),
-                nsfwPicCount: firebase.firestore.FieldValue.increment(nsfw > 0 ? 1 : 0),
-                nsfwLevelCount: firebase.firestore.FieldValue.increment(nsfw),
+                nsfwPicCount: firebase.firestore.FieldValue.increment(result.level > 0 ? 1 : 0),
+                nsfwLevelCount: firebase.firestore.FieldValue.increment(result.level),
               };
               const registerData: UserImage = {
                 alt: uploadState.altToUpload.length == 0 ? null : uploadState.altToUpload,
                 filename: filename,
                 src: url,
                 uploadedTimeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-                nsfw: nsfw,
+                nsfw: result.level,
               };
               userRef
                 .set(userData, { merge: true })
@@ -176,7 +185,7 @@ export default function UserUploader({ uid }: { uid: string }) {
               onUploadError={handleUploadError}
               onUploadSuccess={handleUploadSuccess}
               onProgress={handleProgress}
-              maxWidth={1280}
+              // maxWidth={1280}
             >
               クリックして画像を選択
             </CustomUploadButton>
@@ -188,19 +197,23 @@ export default function UserUploader({ uid }: { uid: string }) {
               {uploadState.registered && (
                 <>
                   <Box>画像がデータベースに登録されました。</Box>
-                  {uploadState.nsfw && uploadState.nsfw > 0 ? (
+                  {uploadState.nsfw && uploadState.nsfw > 1 ? (
                     <Box>
                       <NsfwWarning nsfw={uploadState.nsfw} />
                     </Box>
                   ) : (
                     <Stack pt={4} spacing={4}>
-                      <>
+                      <Badge colorScheme={nsfwColor(uploadState.nsfw ?? 0)}>
+                        NSFWレベル: {uploadState.nsfw}
+                      </Badge>
+                      <Stack spacing={2}>
                         {/* altRegisteredじゃないとinputと同期してしまう*/}
                         <img src={uploadState.result} />
                         <ImgToMarkdown src={uploadState.result} alt={uploadState.altRegistered} />
-                      </>
+                      </Stack>
                     </Stack>
                   )}
+                  {uploadState.nsfwDetail && <NsfwDetailBox detail={uploadState.nsfwDetail} />}
                 </>
               )}
             </>

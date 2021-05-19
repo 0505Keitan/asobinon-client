@@ -1,6 +1,6 @@
 import Logo from '@/components/common/Logo';
 import { SITE_DESC } from '@/lib/constants';
-import { Center } from '@chakra-ui/layout';
+import { Center } from '@chakra-ui/react';
 import Layout from '../components/layout';
 
 const Index = () => (

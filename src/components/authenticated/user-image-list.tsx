@@ -1,15 +1,15 @@
+import { nsfwColor } from '@/lib/nsfw-color';
 import { UserImage } from '@/models/firestore/user';
-import { Badge, Box, Stack } from '@chakra-ui/layout';
+import { Badge, Box, Stack } from '@chakra-ui/react';
 import ImgToMarkdown from '../common/img-to-markdown';
 
 function Image({ image, viewerUid }: { image: UserImage; viewerUid: string }) {
   return (
     <Box rounded="xl" borderWidth={2} borderColor="gray.200" p={6}>
       <Stack>
-        {image.nsfw > 0 ? (
+        {image.nsfw > 1 ? (
           <Box>
-            <Box fontSize="2rem">NSFW判定なので表示できません。</Box>
-            <Badge colorScheme="red">NSFWレベル: {image.nsfw}</Badge>
+            <Box fontSize="2rem">NSFW判定が2以上なので表示できません。</Box>
           </Box>
         ) : (
           <>
@@ -26,6 +26,7 @@ function Image({ image, viewerUid }: { image: UserImage; viewerUid: string }) {
             <>あなたがアップロードした画像ではありません。</>
           )}
         </Box>
+        <Badge colorScheme={nsfwColor(image.nsfw)}>NSFWレベル: {image.nsfw}</Badge>
       </Stack>
     </Box>
   );

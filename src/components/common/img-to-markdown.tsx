@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/button';
-import { Box, Code, Stack } from '@chakra-ui/layout';
+import { Box, Code, Stack } from '@chakra-ui/react';
 import { useState } from 'react';
 
 export default function ImgToMarkdown({ src, alt }: { src: string; alt: string }) {

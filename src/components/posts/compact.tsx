@@ -1,6 +1,6 @@
 import { Post } from '@/models/markdown';
 import { Button } from '@chakra-ui/button';
-import { Badge, Box, Heading, Stack } from '@chakra-ui/layout';
+import { Badge, Box, Heading, Stack } from '@chakra-ui/react';
 import LinkChakra from '../common/link-chakra';
 
 export default function PostCompact({ post }: { post: Post }) {
