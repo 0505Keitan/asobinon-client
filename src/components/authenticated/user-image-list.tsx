@@ -1,5 +1,4 @@
 import { UserImage } from '@/models/firestore/user';
-import { Button } from '@chakra-ui/button';
 import { Badge, Box, Stack } from '@chakra-ui/layout';
 import ImgToMarkdown from '../common/img-to-markdown';
 
