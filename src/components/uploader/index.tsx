@@ -31,7 +31,7 @@ export type Props = {
   metadata?: Object;
   randomizeFilename?: boolean;
   as?: any;
-  maxWidth: number;
+  // maxWidth: number;
   style?: Object;
   hidden?: boolean;
   // default input props
@@ -91,10 +91,10 @@ export default class FirebaseFileUploaderModifiedBySasigume extends Component<Pr
 
     Promise.resolve()
       .then(() => {
-        const shouldResize = file.type.match(/image.*/) && this.props.maxWidth;
-        if (shouldResize) {
-          return resizeAndCropImage(file, this.props.maxWidth);
-        }
+        //const shouldResize = file.type.match(/image.*/) && this.props.maxWidth;
+        //if (shouldResize) {
+        //  return resizeAndCropImage(file, this.props.maxWidth);
+        //}
         return file;
       })
       .then((file) => {
@@ -144,7 +144,7 @@ export default class FirebaseFileUploaderModifiedBySasigume extends Component<Pr
       randomizeFilename,
       metadata,
       filename,
-      maxWidth,
+      //maxWidth,
       hidden,
       as: Input = 'input',
       ...props
