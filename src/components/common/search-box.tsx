@@ -1,5 +1,5 @@
 import { SITE_URL } from '@/lib/constants';
-import { Box, Flex } from '@chakra-ui/layout';
+import { Box, Flex } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { InputControl, SubmitButton } from 'formik-chakra-ui';
 import FaiconDiv from './faicon-div';

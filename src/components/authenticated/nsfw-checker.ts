@@ -1,20 +1,8 @@
-type nsfwType = 'UNKNOWN' | 'VERY_UNLIKELY' | 'UNLIKELY' | 'POSSIBLE' | 'LIKELY' | 'VERY_LIKELY';
-type nsfwResult = {
-  adult: nsfwType;
-  spoof: nsfwType;
-  medical: nsfwType;
-  violence: nsfwType;
-  racy: nsfwType;
-  adultConfidence: number;
-  spoofConfidence: number;
-  medicalConfidence: number;
-  violenceConfidence: number;
-  racyConfidence: number;
-  nsfwConfidence: number;
-} | null;
+import { NsfwLevel, NsfwResult } from '@/models/nsfw';
 
-const nsfwChecker = async (url: string) => {
-  const result: nsfwResult = await fetch(
+const nsfwChecker = async (url: string): Promise<NsfwResult> => {
+  let level: NsfwLevel = 0;
+  const result: NsfwResult['detail'] = await fetch(
     `${process.env.HTTPS_URL}/api/check-image?filename=${url}`,
     {
       headers: {
@@ -27,19 +15,21 @@ const nsfwChecker = async (url: string) => {
     })
     .catch((e) => console.error(e));
   if (result) {
-    if (result?.adult == 'VERY_LIKELY') {
-      return 3;
+    if (result?.adult == 'VERY_LIKELY' || result?.racy == 'VERY_LIKELY') {
+      level = 3;
     }
-    if (result?.adult == 'LIKELY') {
-      return 2;
+    if (result?.adult == 'LIKELY' || result.racy == 'LIKELY') {
+      level = 2;
     }
-    if (result?.adult == 'POSSIBLE') {
-      return 1;
+    if (result?.adult == 'POSSIBLE' || result.racy == 'POSSIBLE') {
+      level = 1;
     }
-    return 0;
-  } else {
-    return null;
   }
+
+  return {
+    detail: result,
+    level: level,
+  };
 };
 
 export default nsfwChecker;

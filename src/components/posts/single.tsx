@@ -1,5 +1,5 @@
 import { Post } from '@/models/markdown';
-import { Badge, Box, Divider, Heading, Stack } from '@chakra-ui/layout';
+import { Badge, Box, Divider, Heading, Stack } from '@chakra-ui/react';
 
 export default function PostSingle({ post }: { post: Post }) {
   return (
