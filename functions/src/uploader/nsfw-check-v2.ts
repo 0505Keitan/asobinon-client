@@ -52,34 +52,41 @@ const nsfwCheckV2 = functions
     const detect = `gs://${bucketName}/${storagePath}`;
     let messages: string[] = [];
     let level: NsfwLevel = 0;
+    let adultLevel = 0;
+    let racyLevel = 0;
     try {
       const [result] = await client.safeSearchDetection(detect);
       const detections = result.safeSearchAnnotation as ApiResult;
 
-      if (detections.adult == 'VERY_LIKELY') {
-        messages.push('アダルト度3');
-        level = 3;
-      }
-      if (detections.racy == 'VERY_LIKELY') {
-        messages.push('卑猥度3');
-        level = 3;
+      if (detections.adult == 'POSSIBLE') {
+        messages.push('アダルト度1');
+        adultLevel = 1;
       }
       if (detections.adult == 'LIKELY') {
         messages.push('アダルト度2');
-        level = 2;
+        adultLevel = 2;
+      }
+      if (detections.adult == 'VERY_LIKELY') {
+        messages.push('アダルト度3');
+        adultLevel = 3;
+      }
+
+      // racyは露出が多いとすぐ上がるのでadultより1つ下げる
+      if (detections.racy == 'POSSIBLE') {
+        messages.push('露出度1');
+        racyLevel = 0;
       }
       if (detections.racy == 'LIKELY') {
-        messages.push('卑猥度2');
-        level = 2;
+        messages.push('露出度2');
+        racyLevel = 1;
       }
-      if (detections.adult == 'POSSIBLE') {
-        messages.push('アダルト度1');
-        level = 1;
+      if (detections.racy == 'VERY_LIKELY') {
+        messages.push('露出度3');
+        racyLevel = 2;
       }
-      if (detections.racy == 'POSSIBLE') {
-        messages.push('卑猥度1');
-        level = 1;
-      }
+
+      // 低い方が最終的なNSFWレベルになる
+      level = Math.min(adultLevel, racyLevel) as NsfwLevel;
     } catch (e) {
       functions.logger.error(e);
     }

@@ -2,9 +2,10 @@ import { useAuthentication } from '@/hooks/authentication';
 import Layout from '@/components/layout';
 import { Box } from '@chakra-ui/react';
 import firebase from 'firebase';
-import UserImageList from '@/components/authenticated/user-image-list';
+import UserImageList from '@/components/image-uploader/user-image-list';
 import { UserImage } from '@/models/firestore/user';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import PleaseLogin from '@/components/common/please-login';
 
 export default function ImagesIndexPage({ error, images }: { error: string; images: UserImage[] }) {
   const { user } = useAuthentication();
@@ -22,7 +23,7 @@ export default function ImagesIndexPage({ error, images }: { error: string; imag
           )}
         </>
       ) : (
-        <Box>ログインしてください</Box>
+        <PleaseLogin to="/authenticated/images" />
       )}
     </Layout>
   );

@@ -1,14 +1,12 @@
-import { useAuthentication } from '@/hooks/authentication';
 import Layout from '@/components/layout';
-import { Box } from '@chakra-ui/react';
-
-import UserUploader from '@/components/authenticated/user-uploader';
+import ImageUploader from '@/components/image-uploader';
+import { useAuthentication } from '@/hooks/authentication';
+import PleaseLogin from '@/components/common/please-login';
 export default function UploadPage() {
   const { user } = useAuthentication();
-
   return (
     <Layout meta={{ title: '画像アップローダー', desc: '画像アップローダーです' }}>
-      {user ? <UserUploader uid={user.uid} /> : <Box>ログインしてください</Box>}
+      {user ? <ImageUploader /> : <PleaseLogin to="/authenticated/images/upload" />}
     </Layout>
   );
 }

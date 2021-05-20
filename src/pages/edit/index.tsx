@@ -135,7 +135,7 @@ const EditDocsPage = ({ path }: PageProps) => {
       </Layout>
     );
   } else {
-    return <Box>パス指定がないよ!</Box>;
+    return <Box>編集画面へのリンクが間違っています</Box>;
   }
 };
 

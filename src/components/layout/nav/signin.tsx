@@ -13,7 +13,7 @@ const SignInComponent = () => {
     firebaseApi.auth().signOut();
   };
   const gotomypage = () => {
-    router.push('/authenticated');
+    router.push(`/authenticated?to=${router.asPath}`);
   };
   return (
     <Menu>
@@ -21,7 +21,7 @@ const SignInComponent = () => {
         <>
           <MenuButton
             as={Button}
-            href="/users/me/"
+            href="/authenticated"
             leftIcon={
               <Box w={6} rounded="full" overflow="hidden">
                 <Image src={user ? user.photoURL : '/icon-180x.png'} width={32} height={32} />
