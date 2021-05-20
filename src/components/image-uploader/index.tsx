@@ -5,7 +5,6 @@ import 'firebase/firestore';
 
 import { Box, Stack, Input, Badge } from '@chakra-ui/react';
 import ImgToMarkdown from '@/components/common/img-to-markdown';
-import PleaseLogin from '@/components/common/please-login';
 
 import { Formik } from 'formik';
 import { CheckboxControl } from 'formik-chakra-ui';
