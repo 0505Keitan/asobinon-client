@@ -10,30 +10,45 @@ import { Formik } from 'formik';
 import { CheckboxControl } from 'formik-chakra-ui';
 import * as Yup from 'yup';
 import Warning from '@/components/common/warning';
-import CustomUploadButton from '@/components/authenticated/firebase-uploader';
+import CustomUploadButton from '@/components/image-uploader/firebase-uploader';
 import NsfwWarning from '@/components/common/nsfw-warning';
 import { NsfwFunctionResult } from '@/models/nsfw';
 import { nsfwColor } from '@/lib/nsfw-color';
+import { useAuthentication } from '@/hooks/authentication';
 
 interface UploadStateType {
+  // これが「タイトル入力フィールド」と同期
   altToUpload: string;
-  filename: string;
-  username: string;
-  isUploading: boolean;
-  progress: number;
-  result?: string;
-  registered: boolean;
+  // 「確定した」画像タイトルはここ
   altRegistered: string;
-  error?: string;
+
+  // アップロード中か
+  isUploading: boolean;
+
+  // アップロード進捗
+  progress: number;
+
+  // NSFWチェック中か
+  isChecking: boolean;
+  // NSFWレベル(APIから取得)
   nsfw?: NsfwFunctionResult['level'];
   nsfwMessages?: NsfwFunctionResult['messages'];
+  // NSFWチェック終わったか
+  registered: boolean;
+
+  // アップ成功した場合はresultがURLに
+  result?: string;
+
+  // エラー
+  error?: string;
 }
 
-export default function UserUploader({ uid }: { uid: string }) {
+export default function ImageUploader() {
+  const { user } = useAuthentication();
   const initialState = {
     altToUpload: '',
-    filename: '',
     username: '',
+    isChecking: false,
     isUploading: false,
     progress: 0,
     result: undefined,
@@ -70,13 +85,12 @@ export default function UserUploader({ uid }: { uid: string }) {
   const handleUploadSuccess = (filename: string) => {
     setUploadState((prev) => ({
       ...prev,
-      filename: filename,
       progress: 100,
       isUploading: false,
     }));
     firebase
       .storage()
-      .ref(uploadRef(uid))
+      .ref(uploadRef(user.uid))
       .child(filename)
       .getDownloadURL()
       .then(async (url) => {
@@ -84,8 +98,14 @@ export default function UserUploader({ uid }: { uid: string }) {
         const body = {
           src: url,
           alt: uploadState.altToUpload ?? null,
-          uid: uid,
+          uid: user.uid,
         };
+
+        // チェック中をON
+        setUploadState((prev) => ({
+          ...prev,
+          isChecking: true,
+        }));
 
         const result: NsfwFunctionResult = await fetch(
           `${process.env.HTTPS_URL}/api/check-image-v2`,
@@ -98,6 +118,11 @@ export default function UserUploader({ uid }: { uid: string }) {
           },
         )
           .then((res) => {
+            // チェック中をOFF
+            setUploadState((prev) => ({
+              ...prev,
+              isChecking: false,
+            }));
             return res.json();
           })
           .catch((e) => {
@@ -142,34 +167,41 @@ export default function UserUploader({ uid }: { uid: string }) {
           <Box>
             <Warning />
           </Box>
-
-          <Box>
-            <Box pb={2}>画像のタイトル(任意)</Box>
-            <Input
-              value={uploadState.altToUpload}
-              onChange={(e) => setUploadState((prev) => ({ ...prev, altToUpload: e.target.value }))}
-              name="alt"
-              area-label="画像のタイトル"
-              placeholder="画像のタイトル"
-            />
-          </Box>
-          <Box>
-            <CheckboxControl value="agreed" name="agreed" label="利用規約に同意" />
-          </Box>
-          {values.agreed && (
-            <CustomUploadButton
-              accept="image/*"
-              name="image"
-              randomizeFilename
-              storageRef={firebase.storage().ref(uploadRef(uid))}
-              onUploadStart={handleUploadStart}
-              onUploadError={handleUploadError}
-              onUploadSuccess={handleUploadSuccess}
-              onProgress={handleProgress}
-              // maxWidth={1280}
-            >
-              クリックして画像を選択
-            </CustomUploadButton>
+          {uploadState.isChecking ? (
+            <Box>NSFW要素をAIが判定中...</Box>
+          ) : (
+            <>
+              <Box>
+                <Box pb={2}>画像のタイトル(任意)</Box>
+                <Input
+                  value={uploadState.altToUpload}
+                  onChange={(e) =>
+                    setUploadState((prev) => ({ ...prev, altToUpload: e.target.value }))
+                  }
+                  name="alt"
+                  area-label="画像のタイトル"
+                  placeholder="画像のタイトル"
+                />
+              </Box>
+              <Box>
+                <CheckboxControl value="agreed" name="agreed" label="利用規約に同意" />
+              </Box>
+              {values.agreed && (
+                <CustomUploadButton
+                  accept="image/*"
+                  name="image"
+                  randomizeFilename
+                  storageRef={firebase.storage().ref(uploadRef(user.uid))}
+                  onUploadStart={handleUploadStart}
+                  onUploadError={handleUploadError}
+                  onUploadSuccess={handleUploadSuccess}
+                  onProgress={handleProgress}
+                  // maxWidth={1280}
+                >
+                  クリックして画像を選択
+                </CustomUploadButton>
+              )}
+            </>
           )}
           {uploadState.isUploading && <Box>アップロード中: {uploadState.progress}</Box>}
           {uploadState.result && (
