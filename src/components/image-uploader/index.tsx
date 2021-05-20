@@ -70,6 +70,8 @@ export default function ImageUploader() {
     setUploadState((prev) => ({
       ...prev,
       isUploading: true,
+      registered: false,
+      result: undefined,
       progress: 0,
       error: undefined,
     }));
@@ -87,6 +89,7 @@ export default function ImageUploader() {
       ...prev,
       progress: 100,
       isUploading: false,
+      isChecking: true,
     }));
     firebase
       .storage()
@@ -100,13 +103,6 @@ export default function ImageUploader() {
           alt: uploadState.altToUpload ?? null,
           uid: user.uid,
         };
-
-        // チェック中をON
-        setUploadState((prev) => ({
-          ...prev,
-          isChecking: true,
-        }));
-
         const result: NsfwFunctionResult = await fetch(
           `${process.env.HTTPS_URL}/api/check-image-v2`,
           {
@@ -167,64 +163,76 @@ export default function ImageUploader() {
           <Box>
             <Warning />
           </Box>
-          {uploadState.isChecking ? (
-            <Box>NSFW要素をAIが判定中...</Box>
+          {uploadState.isUploading ? (
+            <Box>アップロード中: {uploadState.progress}</Box>
           ) : (
             <>
-              <Box>
-                <Box pb={2}>画像のタイトル(任意)</Box>
-                <Input
-                  value={uploadState.altToUpload}
-                  onChange={(e) =>
-                    setUploadState((prev) => ({ ...prev, altToUpload: e.target.value }))
-                  }
-                  name="alt"
-                  area-label="画像のタイトル"
-                  placeholder="画像のタイトル"
-                />
-              </Box>
-              <Box>
-                <CheckboxControl value="agreed" name="agreed" label="利用規約に同意" />
-              </Box>
-              {values.agreed && (
-                <CustomUploadButton
-                  accept="image/*"
-                  name="image"
-                  randomizeFilename
-                  storageRef={firebase.storage().ref(uploadRef(user.uid))}
-                  onUploadStart={handleUploadStart}
-                  onUploadError={handleUploadError}
-                  onUploadSuccess={handleUploadSuccess}
-                  onProgress={handleProgress}
-                  // maxWidth={1280}
-                >
-                  クリックして画像を選択
-                </CustomUploadButton>
+              {uploadState.isChecking ? (
+                <Box>NSFW要素をAIが判定中...</Box>
+              ) : (
+                <>
+                  <Box>
+                    <Box pb={2}>画像のタイトル(任意)</Box>
+                    <Input
+                      value={uploadState.altToUpload}
+                      onChange={(e) =>
+                        setUploadState((prev) => ({ ...prev, altToUpload: e.target.value }))
+                      }
+                      name="alt"
+                      area-label="画像のタイトル"
+                      placeholder="画像のタイトル"
+                    />
+                  </Box>
+                  <Box>
+                    <CheckboxControl value="agreed" name="agreed" label="利用規約に同意" />
+                  </Box>
+                  {values.agreed && (
+                    <CustomUploadButton
+                      accept="image/*"
+                      name="image"
+                      randomizeFilename
+                      storageRef={firebase.storage().ref(uploadRef(user.uid))}
+                      onUploadStart={handleUploadStart}
+                      onUploadError={handleUploadError}
+                      onUploadSuccess={handleUploadSuccess}
+                      onProgress={handleProgress}
+                      // maxWidth={1280}
+                    >
+                      クリックして画像を選択
+                    </CustomUploadButton>
+                  )}
+                </>
               )}
             </>
           )}
-          {uploadState.isUploading && <Box>アップロード中: {uploadState.progress}</Box>}
+
           {uploadState.result && (
             <>
-              <Box>アップロードできました。</Box>
               {uploadState.registered && (
                 <>
-                  <Box>画像がデータベースに登録されました。</Box>
                   {uploadState.nsfw && uploadState.nsfw > 1 ? (
                     <Box>
                       <NsfwWarning nsfw={uploadState.nsfw} />
                     </Box>
                   ) : (
-                    <Stack pt={4} spacing={4}>
-                      <Badge colorScheme={nsfwColor(uploadState.nsfw ?? 0)}>
-                        NSFWレベル: {uploadState.nsfw}
-                      </Badge>
-                      <Stack spacing={2}>
-                        {/* altRegisteredじゃないとinputと同期してしまう*/}
-                        <img src={uploadState.result} />
-                        <ImgToMarkdown src={uploadState.result} alt={uploadState.altRegistered} />
-                      </Stack>
-                    </Stack>
+                    <>
+                      {!uploadState.isUploading && (
+                        <Stack pt={4} spacing={4}>
+                          <Box>アップロードできました。</Box>
+                          <Badge colorScheme={nsfwColor(uploadState.nsfw ?? 0)}>
+                            NSFWレベル: {uploadState.nsfw}
+                          </Badge>
+                          <Stack spacing={2}>
+                            {/* altRegisteredじゃないとinputと同期してしまう*/}
+                            <img src={uploadState.result} />
+                            <ImgToMarkdown
+                              src={uploadState.result}
+                              alt={uploadState.altRegistered}
+                            />
+                          </Stack>
+                        </Stack>
+                      )}
+                    </>
                   )}
                   {uploadState.nsfwMessages && (
                     <Badge colorScheme={nsfwColor(uploadState.nsfw ?? 0)}>

@@ -97,15 +97,15 @@ export default function Nav() {
                 <Button as={LinkChakra} href="/">
                   トップ
                 </Button>
-                {user && (
-                  <Button
-                    leftIcon={<FaiconDiv icon={['fas', 'images']} />}
-                    as={LinkChakra}
-                    href={`/authenticated/images?uid=${user.uid}`}
-                  >
-                    自分の画像
-                  </Button>
-                )}
+
+                <Button
+                  leftIcon={<FaiconDiv icon={['fas', 'images']} />}
+                  as={LinkChakra}
+                  href={`/authenticated/images${user ? '?uid=' + user.uid : ''}`}
+                >
+                  自分の画像
+                </Button>
+
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'upload']} />}
                   as={LinkChakra}
