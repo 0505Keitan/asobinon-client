@@ -203,7 +203,7 @@ export default function ImageUploader() {
                       <>
                         <Heading as="h2">Markdown</Heading>
                         {/* altRegisteredじゃないとinputと同期してしまう*/}
-                        {uploadState.nsfw && uploadState.nsfw > 0 ? (
+                        {uploadState.nsfw && uploadState.nsfw > 1 ? (
                           <Box>表示できません</Box>
                         ) : (
                           <ImgToMarkdown src={uploadState.result} alt={uploadState.altRegistered} />
