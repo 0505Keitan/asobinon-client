@@ -1,6 +1,6 @@
 {
   "name": "asobinon-client",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"

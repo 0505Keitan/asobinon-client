@@ -85,7 +85,7 @@ const nsfwCheckV2 = functions
       }
 
       // 低い方が最終的なNSFWレベルになる
-      level = Math.round(adultLevel + racyLevel / 2) as NsfwLevel;
+      level = Math.round((adultLevel + racyLevel) / 2) as NsfwLevel;
     } catch (e) {
       functions.logger.error(e);
     }
