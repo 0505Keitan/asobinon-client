@@ -8,14 +8,12 @@ import * as gtag from '@/lib/gtag';
 import FaiconDiv from '@/components/common/faicon-div';
 import LinkChakra from '@/components/common/link-chakra';
 import CreateIssue from '@/components/common/create-issue';
-import { useAuthentication } from '@/hooks/authentication';
 
 const SignInComponent = dynamic(() => import('./signin'), { ssr: false });
 
 // https://dev.to/guimg/hide-menu-when-scrolling-in-reactjs-47bj
 
 export default function Nav() {
-  const { user } = useAuthentication();
   const { colorMode } = useColorMode();
   const [isOpen, setIsOpen] = useState(false);
   const leftValue = () => {
@@ -101,7 +99,7 @@ export default function Nav() {
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'images']} />}
                   as={LinkChakra}
-                  href={`/authenticated/images${user ? '?uid=' + user.uid : ''}`}
+                  href={`/authenticated/images`}
                 >
                   自分の画像
                 </Button>
