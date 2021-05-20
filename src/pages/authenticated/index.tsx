@@ -1,15 +1,21 @@
 import firebase from 'firebase/app';
 import Layout from '@/components/layout';
 import { useAuthentication } from '../../hooks/authentication';
-import { Box, Heading, ButtonGroup, Stack } from '@chakra-ui/react';
+import { Box, Heading, ButtonGroup, Stack, Badge } from '@chakra-ui/react';
 import { ResetButton, SubmitButton, CheckboxSingleControl } from 'formik-chakra-ui';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import * as gtag from '@/lib/gtag';
 
 import Warning from '@/components/common/warning';
+import { useRouter } from 'next/router';
+import LinkChakra from '@/components/common/link-chakra';
 
 export default function UsersMe() {
+  const router = useRouter();
+
+  // 行き先をtoで指定できる
+  const toQuery = router.query.to as string | undefined;
   const { user } = useAuthentication();
 
   const validationSchema = Yup.object({
@@ -22,6 +28,12 @@ export default function UsersMe() {
     firebase
       .auth()
       .signInWithPopup(provider)
+      .then(() => {
+        if (toQuery) {
+          // 指定した宛先に移動
+          router.push(toQuery);
+        }
+      })
       .catch((e) => {
         console.error(e);
       });
@@ -45,8 +57,13 @@ export default function UsersMe() {
         <>
           <Box>
             <Heading as="h1" mb={6} fontStyle="h1">
-              マイページ
+              ログイン画面
             </Heading>
+            {toQuery && (
+              <Badge textTransform="lowercase">
+                ログイン後、<LinkChakra href={toQuery}>{toQuery}</LinkChakra>に移動します。
+              </Badge>
+            )}
           </Box>
           <Heading as="h2" fontStyle="h2" mb={4}>
             ログイン

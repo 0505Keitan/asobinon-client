@@ -5,6 +5,7 @@ import 'firebase/firestore';
 
 import { Box, Stack, Input, Badge } from '@chakra-ui/react';
 import ImgToMarkdown from '@/components/common/img-to-markdown';
+import PleaseLogin from '@/components/common/please-login';
 
 import { Formik } from 'formik';
 import { CheckboxControl } from 'formik-chakra-ui';
@@ -149,105 +150,109 @@ export default function ImageUploader() {
       });
   };
 
-  return (
-    <Formik
-      initialValues={{
-        agreed: false,
-        alt: '',
-      }}
-      validationSchema={validationSchema}
-      onSubmit={() => {}}
-    >
-      {({ values }) => (
-        <Stack as="form" spacing={6}>
-          <Box>
-            <Warning />
-          </Box>
-          {uploadState.isUploading ? (
-            <Box>アップロード中: {uploadState.progress}</Box>
-          ) : (
-            <>
-              {uploadState.isChecking ? (
-                <Box>NSFW要素をAIが判定中...</Box>
-              ) : (
-                <>
-                  <Box>
-                    <Box pb={2}>画像のタイトル(任意)</Box>
-                    <Input
-                      value={uploadState.altToUpload}
-                      onChange={(e) =>
-                        setUploadState((prev) => ({ ...prev, altToUpload: e.target.value }))
-                      }
-                      name="alt"
-                      area-label="画像のタイトル"
-                      placeholder="画像のタイトル"
-                    />
-                  </Box>
-                  <Box>
-                    <CheckboxControl value="agreed" name="agreed" label="利用規約に同意" />
-                  </Box>
-                  {values.agreed && (
-                    <CustomUploadButton
-                      accept="image/*"
-                      name="image"
-                      randomizeFilename
-                      storageRef={firebase.storage().ref(uploadRef(user.uid))}
-                      onUploadStart={handleUploadStart}
-                      onUploadError={handleUploadError}
-                      onUploadSuccess={handleUploadSuccess}
-                      onProgress={handleProgress}
-                      // maxWidth={1280}
-                    >
-                      クリックして画像を選択
-                    </CustomUploadButton>
-                  )}
-                </>
-              )}
-            </>
-          )}
-
-          {uploadState.result && (
-            <>
-              {uploadState.registered && (
-                <>
-                  {uploadState.nsfw && uploadState.nsfw > 1 ? (
+  if (user) {
+    return (
+      <Formik
+        initialValues={{
+          agreed: false,
+          alt: '',
+        }}
+        validationSchema={validationSchema}
+        onSubmit={() => {}}
+      >
+        {({ values }) => (
+          <Stack as="form" spacing={6}>
+            <Box>
+              <Warning />
+            </Box>
+            {uploadState.isUploading ? (
+              <Box>アップロード中: {uploadState.progress}</Box>
+            ) : (
+              <>
+                {uploadState.isChecking ? (
+                  <Box>NSFW要素をAIが判定中...</Box>
+                ) : (
+                  <>
                     <Box>
-                      <NsfwWarning nsfw={uploadState.nsfw} />
+                      <Box pb={2}>画像のタイトル(任意)</Box>
+                      <Input
+                        value={uploadState.altToUpload}
+                        onChange={(e) =>
+                          setUploadState((prev) => ({ ...prev, altToUpload: e.target.value }))
+                        }
+                        name="alt"
+                        area-label="画像のタイトル"
+                        placeholder="画像のタイトル"
+                      />
                     </Box>
-                  ) : (
-                    <>
-                      {!uploadState.isUploading && (
-                        <Stack pt={4} spacing={4}>
-                          <Box>アップロードできました。</Box>
-                          <Badge colorScheme={nsfwColor(uploadState.nsfw ?? 0)}>
-                            NSFWレベル: {uploadState.nsfw}
-                          </Badge>
-                          <Stack spacing={2}>
-                            {/* altRegisteredじゃないとinputと同期してしまう*/}
-                            <img src={uploadState.result} />
-                            <ImgToMarkdown
-                              src={uploadState.result}
-                              alt={uploadState.altRegistered}
-                            />
+                    <Box>
+                      <CheckboxControl value="agreed" name="agreed" label="利用規約に同意" />
+                    </Box>
+                    {values.agreed && (
+                      <CustomUploadButton
+                        accept="image/*"
+                        name="image"
+                        randomizeFilename
+                        storageRef={firebase.storage().ref(uploadRef(user.uid))}
+                        onUploadStart={handleUploadStart}
+                        onUploadError={handleUploadError}
+                        onUploadSuccess={handleUploadSuccess}
+                        onProgress={handleProgress}
+                        // maxWidth={1280}
+                      >
+                        クリックして画像を選択
+                      </CustomUploadButton>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+
+            {uploadState.result && (
+              <>
+                {uploadState.registered && (
+                  <>
+                    {uploadState.nsfw && uploadState.nsfw > 1 ? (
+                      <Box>
+                        <NsfwWarning nsfw={uploadState.nsfw} />
+                      </Box>
+                    ) : (
+                      <>
+                        {!uploadState.isUploading && (
+                          <Stack pt={4} spacing={4}>
+                            <Box>アップロードできました。</Box>
+                            <Badge colorScheme={nsfwColor(uploadState.nsfw ?? 0)}>
+                              NSFWレベル: {uploadState.nsfw}
+                            </Badge>
+                            <Stack spacing={2}>
+                              {/* altRegisteredじゃないとinputと同期してしまう*/}
+                              <img src={uploadState.result} />
+                              <ImgToMarkdown
+                                src={uploadState.result}
+                                alt={uploadState.altRegistered}
+                              />
+                            </Stack>
                           </Stack>
-                        </Stack>
-                      )}
-                    </>
-                  )}
-                  {uploadState.nsfwMessages && (
-                    <Badge colorScheme={nsfwColor(uploadState.nsfw ?? 0)}>
-                      {uploadState.nsfwMessages.join('、')}
-                    </Badge>
-                  )}
-                </>
-              )}
-            </>
-          )}
-          {uploadState.error && (
-            <Badge colorScheme="red">{JSON.stringify(uploadState.error)}</Badge>
-          )}
-        </Stack>
-      )}
-    </Formik>
-  );
+                        )}
+                      </>
+                    )}
+                    {uploadState.nsfwMessages && (
+                      <Badge colorScheme={nsfwColor(uploadState.nsfw ?? 0)}>
+                        {uploadState.nsfwMessages.join('、')}
+                      </Badge>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+            {uploadState.error && (
+              <Badge colorScheme="red">{JSON.stringify(uploadState.error)}</Badge>
+            )}
+          </Stack>
+        )}
+      </Formik>
+    );
+  } else {
+    return <>ログインしてください</>;
+  }
 }
