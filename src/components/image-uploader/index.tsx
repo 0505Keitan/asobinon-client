@@ -193,7 +193,7 @@ export default function ImageUploader() {
                           onUploadError={handleUploadError}
                           onUploadSuccess={handleUploadSuccess}
                           onProgress={handleProgress}
-                          // maxWidth={1280}
+                          maxWidth={1280}
                         >
                           クリックして画像を選択
                         </CustomUploadButton>
