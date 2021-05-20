@@ -15,6 +15,7 @@ module.exports = {
     FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID,
     GTM_ID: process.env.GTM_ID,
     GA_TRACKING_ID: process.env.GA_TRACKING_ID,
+    STORAGE_SIZE_LIMIT: process.env.STORAGE_SIZE_LIMIT,
   },
   images: { domains: ['avatars.githubusercontent.com'] },
 };

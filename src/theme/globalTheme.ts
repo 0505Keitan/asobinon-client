@@ -2,7 +2,7 @@ import { createBreakpoints } from '@chakra-ui/theme-tools';
 
 export const globalLayout = {
   asideWitdh: 300,
-  mainWidth: 600,
+  mainWidth: 900,
   layoutPadding: 30,
   maxW: 0,
   ogp: {
