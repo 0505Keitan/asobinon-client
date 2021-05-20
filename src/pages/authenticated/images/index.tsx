@@ -1,13 +1,10 @@
 import { useAuthentication } from '@/hooks/authentication';
 import Layout from '@/components/layout';
 import { Box } from '@chakra-ui/react';
-import firebase from 'firebase';
 import UserImageList from '@/components/image-uploader/user-image-list';
-import { UserImage } from '@/models/firestore/user';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import PleaseLogin from '@/components/common/please-login';
 
-export default function ImagesIndexPage({ error, images }: { error: string; images: UserImage[] }) {
+export default function ImagesIndexPage({ error }: { error: string }) {
   const { user } = useAuthentication();
 
   return (
@@ -19,7 +16,7 @@ export default function ImagesIndexPage({ error, images }: { error: string; imag
               <Box>{error}</Box>
             </>
           ) : (
-            <UserImageList viewerUid={user.uid} images={images} />
+            <UserImageList />
           )}
         </>
       ) : (
@@ -28,36 +25,3 @@ export default function ImagesIndexPage({ error, images }: { error: string; imag
     </Layout>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async ({
-  query,
-}: GetServerSidePropsContext) => {
-  const uid = query.uid as string | undefined;
-  const userRef = firebase.firestore().collection('users').doc(uid);
-
-  if (!uid || (await userRef.get()).exists == false) {
-    return {
-      props: {
-        error: 'ユーザーが見つかりませんでした',
-        images: null,
-      },
-    };
-  }
-
-  const result = await userRef
-    .collection('images')
-    .get()
-    .then((snapshot) => {
-      return snapshot.docs.map((doc) => {
-        const data = doc.data() as UserImage;
-        return data;
-      });
-    });
-
-  return {
-    props: {
-      error: null,
-      images: JSON.parse(JSON.stringify(result)) ?? [],
-    },
-  };
-};

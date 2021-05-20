@@ -38,7 +38,6 @@ const nsfwCheckV2 = functions
       });
     }
     const parsedBody = JSON.parse(body) as Body;
-    const timeStamp = admin.firestore.FieldValue.serverTimestamp();
 
     if (!parsedBody.uid || !parsedBody.src) {
       return response.status(500).json({
@@ -102,7 +101,7 @@ const nsfwCheckV2 = functions
     const registerData: UserImage = {
       alt: parsedBody.alt && parsedBody.alt?.length > 0 ? parsedBody.alt : null,
       src: parsedBody.src,
-      uploadedTimeStamp: timeStamp,
+      date: new Date(),
       nsfw: level,
     };
     return await userRef
