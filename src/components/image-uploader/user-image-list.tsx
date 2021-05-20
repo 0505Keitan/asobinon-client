@@ -1,6 +1,6 @@
 import { nsfwColor } from '@/lib/nsfw-color';
 import { UserImage } from '@/models/firestore/user';
-import { Badge, Box, Stack } from '@chakra-ui/react';
+import { Badge, Box, Stack, SimpleGrid, Center } from '@chakra-ui/react';
 import ImgToMarkdown from '../common/img-to-markdown';
 import useSWR from 'swr';
 import { User } from '@/models/auth/user';
@@ -9,21 +9,24 @@ import { useAuthentication } from '@/hooks/authentication';
 
 function Image({ image }: { image: UserImage }) {
   return (
-    <Box rounded="xl" borderWidth={2} borderColor="gray.200" p={6}>
+    <Box mx="auto" borderWidth={1} w="300px" borderColor="gray.200" p={6}>
       <Stack>
+        <Badge colorScheme={nsfwColor(image.nsfw)}>NSFWレベル: {image.nsfw}</Badge>
         {image.nsfw > 1 ? (
           <Box>
-            <Box fontSize="2rem">NSFW判定が2以上なので表示できません。</Box>
+            <Box>NSFW判定が2以上なので表示できません。</Box>
           </Box>
         ) : (
           <>
-            <img src={image.src} />
-            <Box>{image.alt && image.alt.length > 0 ? image.alt : '(タイトル無し)'}</Box>
-            <ImgToMarkdown src={image.src} alt={image.alt ?? ''} />
+            <Center flexGrow={1} h="200px" overflow="hidden" objectFit="cover">
+              <img src={image.src} />
+            </Center>
+            <Box bg="white" w="100%">
+              <Box>{image.alt && image.alt.length > 0 ? image.alt : '(タイトル無し)'}</Box>
+              <ImgToMarkdown src={image.src} alt={image.alt ?? ''} />
+            </Box>
           </>
         )}
-
-        <Badge colorScheme={nsfwColor(image.nsfw)}>NSFWレベル: {image.nsfw}</Badge>
       </Stack>
     </Box>
   );
@@ -56,10 +59,10 @@ export default function UserImageList() {
   });
 
   return (
-    <Stack spacing={6}>
+    <SimpleGrid minChildWidth="294px" gap={0}>
       {data && data.map((image) => <Image key={image.src} image={image} />)}
       {loading && <Badge>Loading...</Badge>}
       {error && <Badge>{error}</Badge>}
-    </Stack>
+    </SimpleGrid>
   );
 }
