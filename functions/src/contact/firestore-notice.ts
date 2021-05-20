@@ -11,7 +11,7 @@ const firestoreNotice = functions
   .onWrite((change, context) => {
     const data = change.after.data() as UserImage;
     const uid = context.params.uid;
-    if (data.nsfw > 0) {
+    if (data.nsfw > 1) {
       const userImageUrl = `https://client.asobinon.org/authenticated/images?uid=${uid}`;
       const storageAdminUrl = `https://console.firebase.google.com/project/markdown-gaming/storage/markdown-gaming.appspot.com/files~2Fimages~2Fuserupload~2F${uid}`;
       functions.logger.info('Posting nsfw notice mail');
