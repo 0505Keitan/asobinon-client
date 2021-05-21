@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function Meta({ desc, title, heroImageUrl }: Props) {
-  const ogpUrl = heroImageUrl ?? process.env.HTTPS_URL + '/ogp/ogp-default.png';
+  const ogpUrl = heroImageUrl ?? process.env.HTTPS_URL + '/ogp/ogp-1200x630.png';
 
   return (
     <>
@@ -20,7 +20,7 @@ export default function Meta({ desc, title, heroImageUrl }: Props) {
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" sizes="16x16" type="image/png" href="/favicon-16x16.png" />
         <link rel="icon" sizes="32x32" type="image/png" href="/favicon-32x32.png" />
-        <link rel="shortcut icon" href="/favicons/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="msapplication-TileColor" content="#ffffff" />
         <meta name="theme-color" content={THEME_COLOR}></meta>
