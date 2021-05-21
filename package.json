@@ -1,11 +1,6 @@
 {
   "name": "asobinon-client",
-  "version": "0.1.6",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
+  "version": "0.1.7",
   "scripts": {
     "dev": "next -p 3001",
     "build": "next build",
@@ -62,5 +57,10 @@
   "license": "MIT",
   "lint-staged": {
     "*.{ts,tsx}": "eslint --cache --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
