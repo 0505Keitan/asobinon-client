@@ -29,7 +29,7 @@ const nsfwCheck = functions
         message: 'Please specify filename',
       });
     }
-    const bucketName = 'markdown-gaming.appspot.com';
+    const bucketName = 'asobinon-org.appspot.com';
 
     // Performs safe search property detection on the remote file
     const [result] = await client.safeSearchDetection(`gs://${bucketName}/${filename}`);

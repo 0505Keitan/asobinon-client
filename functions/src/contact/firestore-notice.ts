@@ -13,7 +13,7 @@ const firestoreNotice = functions
     const uid = context.params.uid;
     if (data.nsfw > 1) {
       const userImageUrl = `https://client.asobinon.org/authenticated/images?uid=${uid}`;
-      const storageAdminUrl = `https://console.firebase.google.com/project/markdown-gaming/storage/markdown-gaming.appspot.com/files~2Fimages~2Fuserupload~2F${uid}`;
+      const storageAdminUrl = `https://console.firebase.google.com/project/asobinon-org/storage/asobinon-org.appspot.com/files~2Fimages~2Fuserupload~2F${uid}`;
       functions.logger.info('Posting nsfw notice mail');
       const noticeOptions = {
         title: `【ASOBINON】NSFWレベル${data.nsfw}の画像が投稿されました`,

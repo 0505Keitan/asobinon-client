@@ -44,10 +44,10 @@ const nsfwCheckV2 = functions
         message: 'Please specify all of them: uid, src',
       });
     }
-    const basePath = 'https://firebasestorage.googleapis.com/v0/b/markdown-gaming.appspot.com/o/';
+    const basePath = 'https://firebasestorage.googleapis.com/v0/b/asobinon-org.appspot.com/o/';
 
     const storagePath = decodeURIComponent(parsedBody.src.replace(basePath, '').split('?')[0]);
-    const bucketName = 'markdown-gaming.appspot.com';
+    const bucketName = 'asobinon-org.appspot.com';
     const detect = `gs://${bucketName}/${storagePath}`;
     let messages: string[] = [];
     let level: NsfwLevel = 0;
