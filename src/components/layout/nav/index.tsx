@@ -127,6 +127,13 @@ export default function Nav() {
                   利用規約
                 </Button>
                 <Button
+                  leftIcon={<FaiconDiv icon={['fas', 'book']} />}
+                  as={LinkChakra}
+                  href="/posts/code-of-conduct"
+                >
+                  行動規範
+                </Button>
+                <Button
                   leftIcon={<FaiconDiv icon={['fas', 'user']} />}
                   as={LinkChakra}
                   href="/posts/privacy-policy"
