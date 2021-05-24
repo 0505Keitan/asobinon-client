@@ -57,7 +57,7 @@ const contactWithMailjet = functions
       content: `${parsedBody.text ?? '本文なし'}\n\n---\n返信用メールアドレス: ${
         parsedBody.email.length > 0 ? parsedBody.email : '指定なし'
       }`,
-      from: adminConfig.mail.sender ?? 'functions-from-not-set@ima.icu',
+      from: adminConfig.mail.sender ?? 'functions-from-not-set@aely.one',
       fromName: 'ASOBINON 運営チーム・お問い合わせ部門',
       to: adminConfig.mail.to ?? 'sasigume+mdtonotset@gmail.com',
     };
@@ -74,7 +74,7 @@ const contactWithMailjet = functions
             content: `お問い合わせいただきありがとうございます。返信までお時間をいただくかもしれませんが、ご了承ください。\n\nお問い合わせ内容:\n${
               parsedBody.text ?? ''
             }\n\nお問い合わせID: ${docId}\n\n---\nイマイク代表 安藤 諒 (Ryo Ando)\nsasigume@gmail.com`,
-            from: adminConfig.mail.sender ?? 'functions-from-not-set@ima.icu',
+            from: adminConfig.mail.sender ?? 'functions-from-not-set@aely.one',
             fromName: 'ASOBINON 運営チーム・お問い合わせ部門',
             to: parsedBody.email,
           };
