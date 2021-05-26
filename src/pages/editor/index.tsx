@@ -48,8 +48,8 @@ const EditorPage = ({ path }: { path: string }) => {
 
         <Box my={6}>
           <Heading as="h2">画像アップはこちら</Heading>
-          <Button as={LinkChakra} href="/authenticated/images/upload">
-            画像アップローダーへ
+          <Button as={LinkChakra} isExternal href="https://asobinon.org/ASOBINON/contribute/">
+            画像アップの方法
           </Button>
         </Box>
 

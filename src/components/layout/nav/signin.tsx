@@ -12,8 +12,8 @@ const SignInComponent = () => {
   const logout = () => {
     firebaseApi.auth().signOut();
   };
-  const gotomypage = () => {
-    router.push(`/authenticated?to=${router.asPath}`);
+  const goToMypage = () => {
+    router.push(`/mypage`);
   };
   return (
     <Menu>
@@ -55,7 +55,7 @@ const SignInComponent = () => {
               </Flex>
               {user && (
                 <>
-                  <MenuItem mb={2} as={Button} colorScheme="cyan" onClick={gotomypage}>
+                  <MenuItem mb={2} as={Button} colorScheme="cyan" onClick={goToMypage}>
                     マイページ
                   </MenuItem>
                 </>
@@ -69,7 +69,7 @@ const SignInComponent = () => {
                   as={Button}
                   colorScheme="gray"
                   leftIcon={<FaiconDiv icon={['fas', 'user']} />}
-                  onClick={gotomypage}
+                  onClick={goToMypage}
                 >
                   ログイン
                 </MenuItem>

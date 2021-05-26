@@ -17,5 +17,5 @@ module.exports = {
     GA_TRACKING_ID: process.env.GA_TRACKING_ID,
     STORAGE_SIZE_LIMIT: process.env.STORAGE_SIZE_LIMIT,
   },
-  images: { domains: ['avatars.githubusercontent.com'] },
+  images: { domains: ['localhost', 'avatars.githubusercontent.com'] },
 };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Box, Button, CloseButton, Flex, HStack, Stack, useColorMode } from '@chakra-ui/react';
 import { ASIDE_WIDTH, LAYOUT_PADDING } from '@/theme/index';
 import ColorSwitch from '../color-switch';
@@ -7,6 +8,8 @@ import * as gtag from '@/lib/gtag';
 import FaiconDiv from '@/components/common/faicon-div';
 import LinkChakra from '@/components/common/link-chakra';
 import CreateIssue from '@/components/common/create-issue';
+
+const SignInComponent = dynamic(() => import('./signin'), { ssr: false });
 
 // https://dev.to/guimg/hide-menu-when-scrolling-in-reactjs-47bj
 
@@ -82,6 +85,9 @@ export default function Nav() {
                 <Logo logoSelection="square" />
               </Box>
               <ColorSwitch />
+              <Box>
+                <SignInComponent />
+              </Box>
 
               <CreateIssue />
 
@@ -89,7 +95,6 @@ export default function Nav() {
                 <Button as={LinkChakra} href="/">
                   トップ
                 </Button>
-
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'comment-alt']} />}
                   as={LinkChakra}
@@ -97,6 +102,7 @@ export default function Nav() {
                 >
                   お問い合わせ
                 </Button>
+
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'book']} />}
                   as={LinkChakra}
