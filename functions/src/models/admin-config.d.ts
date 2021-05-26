@@ -11,4 +11,7 @@ export interface AdminConfig {
   docusaurus: {
     auth: string;
   };
+  github: {
+    editortoken: string;
+  };
 }
