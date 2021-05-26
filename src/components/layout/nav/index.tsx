@@ -122,21 +122,24 @@ export default function Nav() {
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'book']} />}
                   as={LinkChakra}
-                  href="/posts/eula"
+                  href="https://asobinon.org/eula/"
+                  isExternal
                 >
                   利用規約
                 </Button>
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'book']} />}
                   as={LinkChakra}
-                  href="/posts/code-of-conduct"
+                  href="https://asobinon.org/code-of-conduct/"
+                  isExternal
                 >
                   行動規範
                 </Button>
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'user']} />}
                   as={LinkChakra}
-                  href="/posts/privacy-policy"
+                  href="https://asobinon.org/privacy-policy/"
+                  isExternal
                 >
                   プライバシーポリシー
                 </Button>

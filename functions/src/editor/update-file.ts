@@ -45,6 +45,12 @@ const updateFile = functions
       });
     }
 
+    if (!parsedBody.sha) {
+      return response.status(500).json({
+        message: `Please specify sha`,
+      });
+    }
+
     if (!parsedBody.content) {
       return response.status(500).json({
         message: `Please specify content`,
@@ -90,9 +96,21 @@ const updateFile = functions
       .then(async (res) => {
         const prev: GetResponse = await res.json();
 
-        if (!prev.sha)
+        if (!prev.sha) {
           functions.logger.info(` Creating new file because ${parsedBody.path} not found`);
-        else functions.logger.info(`Updating ${parsedBody.path}`);
+        } else {
+          if (prev.sha != parsedBody.sha) {
+            // 矛盾してる(クライアントが最初にGETしてからファイル変わった
+            functions.logger.warn(
+              `Found conflict with previous file: ${parsedBody.path} (prev:${prev.sha} / req:${parsedBody.sha})`,
+            );
+            return response.status(409).json({
+              message: `Found conflict with previous file`,
+            });
+          } else {
+            functions.logger.info(`Updating ${parsedBody.path}`);
+          }
+        }
 
         const postOptions = {
           method: 'PUT',
@@ -104,21 +122,40 @@ const updateFile = functions
           body: JSON.stringify(requestBody(prev.sha)),
         };
 
+        // shaが違うと 409 Conflictになる
         await fetch(api, postOptions)
           .then(async (res) => {
             const data = (await res.json()) as PostResponse;
-            if (data.content && data.content.html_url !== undefined) {
+            // created is 201
+            if (res.status == 201) {
+              functions.logger.info(
+                `Successfully created ${parsedBody.path} (${parsedBody.message})`,
+              );
+              return response.status(201).json({
+                message: `Created file: ${data.content.html_url}`,
+              });
+            }
+            // updated is 200
+            if (res.status == 200) {
               functions.logger.info(
                 `Successfully updated ${parsedBody.path} (${parsedBody.message})`,
               );
               return response.status(200).json({
                 message: `Updated file: ${data.content.html_url}`,
               });
-            } else {
-              return response.status(500).json({
-                message: data.message,
+            }
+
+            // conflict is 409
+            if (res.status == 409) {
+              functions.logger.warn(`Conflict: ${parsedBody.path}`);
+              return response.status(409).json({
+                message: `Conflict`,
               });
             }
+
+            return response.status(res.status).json({
+              message: res.statusText,
+            });
           })
           .catch((e) => {
             return response.status(500).json({ error: e, message: `Error on updating file` });
