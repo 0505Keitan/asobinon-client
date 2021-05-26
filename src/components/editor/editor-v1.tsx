@@ -60,7 +60,6 @@ const EditorV1 = ({ path }: { path: string }) => {
   });
   const decoded = decode(data?.content ?? '');
   const [md, setMd] = useState(decoded);
-  const [link, setLink] = useState(data?.html_url);
 
   useEffect(() => {
     setMd(decoded);
@@ -113,7 +112,7 @@ const EditorV1 = ({ path }: { path: string }) => {
       ) : (
         <Stack spacing={6}>
           {path && (
-            <Button as={LinkChakra} isExternal href={link}>
+            <Button as={LinkChakra} isExternal href={data?.html_url}>
               GitHubで見る
             </Button>
           )}
