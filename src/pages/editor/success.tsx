@@ -21,7 +21,7 @@ const SuccessPage = ({ path }: { path: string | null }) => {
         <Stack spacing={6}>
           <Heading as="h1">{title}</Heading>
           <SlideShow
-            initialCount={35}
+            initialCount={45}
             contents={[
               '更新開始...',
               'GitHubからサーバーへ転送中...',

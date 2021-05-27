@@ -12,6 +12,8 @@ const SlideShow = ({ initialCount, contents }: { initialCount: number; contents:
         setCount(count - 1);
       }, 1000);
     // あまりを使って進捗を分割
+    // この計算がマジでわからない
+    // 手探り
     if (count % ((initialCount + 1) / split) < 1) setProgress(progress + 1);
     count == 0 && setProgress(split);
   }, [count]);
