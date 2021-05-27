@@ -36,7 +36,7 @@ const updateFile = functions
     try {
       await admin.auth().verifyIdToken(idToken);
     } catch (error) {
-      functions.logger.error('Error while verifying Firebase ID token:', error);
+      functions.logger.error('Error while verifying Firebase ID token');
       return response.status(403).json({ message: 'Unauthorized' });
     }
 
@@ -97,9 +97,13 @@ const updateFile = functions
       });
     }
 
-    const api = `https://api.github.com/repos/aelyone/aelyone-github-api-test/contents${parsedBody.path}`;
-    // 改行を直してからエンコード
+    // スラッシュがエンコードされないように
+    const afterSlash = parsedBody.path.substring(1);
 
+    const api = `https://api.github.com/repos/aelyone/asobinon/contents/website/${encodeURIComponent(
+      afterSlash,
+    )}`;
+    // 本文をエンコード
     const encodedContent = encode(parsedBody.content);
 
     // shaがあるかないかで分岐する
@@ -139,14 +143,9 @@ const updateFile = functions
         } else {
           if (prev.sha != parsedBody.sha) {
             // 矛盾してる(クライアントが最初にGETしてからファイル変わった
-            functions.logger.warn(
-              `Found conflict with previous file: ${parsedBody.path} (prev:${prev.sha} / req:${parsedBody.sha})`,
-            );
             return response.status(409).json({
               message: `Found conflict with previous file`,
             });
-          } else {
-            functions.logger.info(`Updating ${parsedBody.path}`);
           }
         }
 
@@ -159,7 +158,6 @@ const updateFile = functions
           },
           body: JSON.stringify(requestBody(prev.sha)),
         };
-        functions.logger.debug(JSON.stringify(postOptions.body));
 
         // shaが違うと 409 Conflictになる
         await fetch(api, postOptions)
@@ -187,7 +185,6 @@ const updateFile = functions
 
             // conflict is 409
             if (res.status == 409) {
-              functions.logger.warn(`Conflict: ${parsedBody.path}`);
               return response.status(409).json({
                 message: `Conflict`,
               });
@@ -198,11 +195,15 @@ const updateFile = functions
             });
           })
           .catch((e) => {
-            return response.status(500).json({ error: e, message: `Error on updating file` });
+            return response
+              .status(500)
+              .json({ message: `${JSON.stringify(e)} / Error on updating file` });
           });
       })
       .catch((e) => {
-        return response.status(500).json({ error: e, message: `Error on fetching file` });
+        return response
+          .status(500)
+          .json({ message: `${JSON.stringify(e)} / Error on updating file` });
       });
   });
 

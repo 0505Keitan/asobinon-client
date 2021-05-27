@@ -29,7 +29,11 @@ const fetchGitHub = functions
       });
     }
 
-    const api = `https://api.github.com/repos/aelyone/aelyone-github-api-test/contents${path}`;
+    const afterSlash = path.substring(1);
+    const api = `https://api.github.com/repos/aelyone/asobinon/contents/website/${encodeURIComponent(
+      afterSlash,
+    )}`;
+    functions.logger.debug(`Func api: ${api}`);
 
     await fetch(api, {
       method: 'GET',
@@ -41,11 +45,14 @@ const fetchGitHub = functions
     })
       .then(async (res) => {
         const data: GetResponse = await res.json();
-
-        return response.status(res.status).json(data);
+        if (res.ok) return response.status(res.status).json(data);
+        return response.status(res.status).json({ message: `Not ok :${JSON.stringify(data)}` });
       })
       .catch((e) => {
-        return response.status(500).json({ error: e, message: `Error on fetching file` });
+        functions.logger.debug(e);
+        return response
+          .status(500)
+          .json({ message: `${JSON.stringify(e)} / Error on fetching file` });
       });
   });
 
