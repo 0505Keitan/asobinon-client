@@ -70,7 +70,6 @@ const updateFile = functions
     }
 
     const api = `https://api.github.com/repos/aelyone/aelyone-github-api-test/contents${parsedBody.path}`;
-    console.debug('API: ', api);
     // 改行を直してからエンコード
 
     const encodedContent = encode(parsedBody.content);
@@ -92,7 +91,14 @@ const updateFile = functions
     };
 
     // ファイルが存在するか確認
-    await fetch(api)
+    await fetch(api, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${adminConfig.github.editortoken}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    })
       .then(async (res) => {
         const prev: GetResponse = await res.json();
 
