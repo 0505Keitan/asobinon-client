@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Box, Button, CloseButton, Flex, HStack, Stack, useColorMode } from '@chakra-ui/react';
-import { ASIDE_WITDH, LAYOUT_PADDING } from '@/theme/index';
+import { ASIDE_WIDTH, LAYOUT_PADDING } from '@/theme/index';
 import ColorSwitch from '../color-switch';
 import Logo from '@/components/common/Logo';
 import * as gtag from '@/lib/gtag';
@@ -21,7 +21,7 @@ export default function Nav() {
       return 0;
     } else {
       // 左にずらして隠す
-      return { base: `-${ASIDE_WITDH + LAYOUT_PADDING}px`, lg: 0 };
+      return { base: `-${ASIDE_WIDTH + LAYOUT_PADDING}px`, lg: 0 };
     }
   };
   return (
@@ -59,7 +59,7 @@ export default function Nav() {
         zIndex={6}
       >
         <Flex
-          w={`${ASIDE_WITDH}px`}
+          w={`${ASIDE_WIDTH}px`}
           flexDir="column"
           h="full"
           overflowY="scroll"
@@ -95,22 +95,6 @@ export default function Nav() {
                 <Button as={LinkChakra} href="/">
                   トップ
                 </Button>
-
-                <Button
-                  leftIcon={<FaiconDiv icon={['fas', 'images']} />}
-                  as={LinkChakra}
-                  href={`/authenticated/images`}
-                >
-                  自分の画像
-                </Button>
-
-                <Button
-                  leftIcon={<FaiconDiv icon={['fas', 'upload']} />}
-                  as={LinkChakra}
-                  href="/authenticated/images/upload"
-                >
-                  画像アップローダー
-                </Button>
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'comment-alt']} />}
                   as={LinkChakra}
@@ -122,21 +106,24 @@ export default function Nav() {
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'book']} />}
                   as={LinkChakra}
-                  href="/posts/eula"
+                  href="https://asobinon.org/eula/"
+                  isExternal
                 >
                   利用規約
                 </Button>
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'book']} />}
                   as={LinkChakra}
-                  href="/posts/code-of-conduct"
+                  href="https://asobinon.org/code-of-conduct/"
+                  isExternal
                 >
                   行動規範
                 </Button>
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'user']} />}
                   as={LinkChakra}
-                  href="/posts/privacy-policy"
+                  href="https://asobinon.org/privacy-policy/"
+                  isExternal
                 >
                   プライバシーポリシー
                 </Button>
@@ -160,7 +147,7 @@ export default function Nav() {
         <HStack
           px={3}
           ml="auto"
-          w={{ base: '100vw', lg: `calc(100vw - ${ASIDE_WITDH + LAYOUT_PADDING}px)` }}
+          w={{ base: '100vw', lg: `calc(100vw - ${ASIDE_WIDTH + LAYOUT_PADDING}px)` }}
         >
           <Button
             display={{ base: 'block', lg: 'none' }}

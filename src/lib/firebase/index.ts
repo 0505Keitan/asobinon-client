@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/analytics';
 import 'firebase/auth';
 import 'firebase/firestore';
-
+// https://qiita.com/y-shida1997/items/f5e52c7288813a8184ff
 const config = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -17,4 +17,4 @@ if (!firebase.apps.length) {
 
 export default firebase;
 
-// https://qiita.com/y-shida1997/items/f5e52c7288813a8184ff
+export { default as getIdToken } from './get-id-token';

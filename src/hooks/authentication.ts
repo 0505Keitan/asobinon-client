@@ -17,13 +17,6 @@ export function useAuthentication() {
     }
 
     firebase.auth().onAuthStateChanged(async (firebaseUser) => {
-      const orgName = process.env.GITHUB_ORG_NAME;
-
-      if (!orgName) {
-        console.error(`Please set GITHUB_ORG_NAME env`);
-        return;
-      }
-
       if (firebaseUser) {
         const loginUser: User = {
           uid: firebaseUser.uid,
