@@ -54,13 +54,14 @@ const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }
   ------------------------ */
 
   const fetcher = async (path: string) => {
-    console.debug(`Triggering fetcher`);
-
-    const result: GetResOk = await fetch(`${process.env.HTTPS_URL}/api/get-github?path=${path}`, {
-      headers: {
-        authorization: process.env.FUNCTIONS_AUTH ?? '',
+    const result: GetResOk = await fetch(
+      `${process.env.HTTPS_URL}/api/get-github?path=${encodeURIComponent(path)}`,
+      {
+        headers: {
+          authorization: process.env.FUNCTIONS_AUTH ?? '',
+        },
       },
-    })
+    )
       .then(async (res) => {
         console.info(`%cData fetched`, `font-weight:bold`);
 

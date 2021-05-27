@@ -9,8 +9,10 @@ export default async function getGithub(request: NextApiRequest, response: NextA
       message: 'Invalid token',
     });
   }
-
-  return await fetch(`${process.env.FUNCTIONS_URL}/editor-fetchGitHub?path=${path}`, {
+  const api = `${process.env.FUNCTIONS_URL}/editor-fetchGitHub?path=${encodeURIComponent(
+    path ?? '',
+  )}`;
+  return await fetch(api, {
     headers: {
       Authorization: secret,
     },
