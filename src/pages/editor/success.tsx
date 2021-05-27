@@ -23,7 +23,9 @@ const SuccessPage = ({ path }: { path: string | null }) => {
           <Box>変更の反映には1分ほど時間がかかります</Box>
           <Stat>
             <StatNumber>{count}</StatNumber>
-            <StatHelpText>0になるまで待ってね!</StatHelpText>
+            <StatHelpText>
+              {count == 0 ? 'おそらく反映されました' : '0になるまで待ってね!'}
+            </StatHelpText>
           </Stat>
           {count == 0 && (
             <Button as={LinkChakra} isExternal href={actualPath}>

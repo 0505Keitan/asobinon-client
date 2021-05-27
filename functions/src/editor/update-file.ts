@@ -109,7 +109,11 @@ const updateFile = functions
         const prev: GetResponse = await res.json();
 
         if (!prev.sha) {
-          functions.logger.info(` Creating new file because ${parsedBody.path} not found`);
+          // 見つからない場合前のsha取れなくて厄介なことになる
+          // エディタはファイル作成を想定していない
+          return response.status(404).json({
+            message: `File not found (probably removed)`,
+          });
         } else {
           if (prev.sha != parsedBody.sha) {
             // 矛盾してる(クライアントが最初にGETしてからファイル変わった
@@ -139,7 +143,8 @@ const updateFile = functions
         await fetch(api, postOptions)
           .then(async (res) => {
             const data = (await res.json()) as PostResponse;
-            // created is 201
+            // エディタはファイル作成を想定していない
+            // が、結果的に201ならそれでいいことにする
             if (res.status == 201) {
               functions.logger.info(
                 `Successfully created ${parsedBody.path} (${parsedBody.message})`,
