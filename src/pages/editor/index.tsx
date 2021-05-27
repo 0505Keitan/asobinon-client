@@ -25,7 +25,15 @@ import { GetResOk } from '@/models/github';
 このページは「このページを編集」からクエリ付きでアクセスする前提
 */
 
-const EditorPage = ({ path, initialData }: { path: string; initialData: GetResOk | null }) => {
+const EditorPage = ({
+  path,
+  initialData,
+  forbidden,
+}: {
+  path: string;
+  initialData: GetResOk | null;
+  forbidden?: boolean;
+}) => {
   const title = `編集補助ページ (編集対象:${path})`;
   const repoUrl = process.env.DOCS_REPOSITORY_URL;
   if (!repoUrl) {
@@ -34,6 +42,10 @@ const EditorPage = ({ path, initialData }: { path: string; initialData: GetResOk
         レポジトリの環境変数<pre>DOCS_REPOSITORY_URL</pre>を設定してください
       </Box>
     );
+  }
+
+  if (forbidden) {
+    return <Box>このファイルは編集できません</Box>;
   }
 
   if (typeof path === 'string') {
@@ -66,7 +78,7 @@ const EditorPage = ({ path, initialData }: { path: string; initialData: GetResOk
                 {initialData && initialData.content ? (
                   <EditorV1 path={path} initialData={initialData} />
                 ) : (
-                  <Box>Loading...</Box>
+                  <Box>ファイルの新規作成には対応していません</Box>
                 )}
               </Stack>
             </TabPanel>
@@ -143,7 +155,7 @@ const EditorPage = ({ path, initialData }: { path: string; initialData: GetResOk
       </Layout>
     );
   } else {
-    return <Box>編集画面へのリンクが間違っています</Box>;
+    return <Box>編集するファイルが指定されていません</Box>;
   }
 };
 
@@ -151,6 +163,26 @@ export default EditorPage;
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const path = context.query.path;
+
+  if (typeof path !== 'string') {
+    return {
+      props: {
+        path: null,
+        initialData: null,
+      },
+    };
+  }
+
+  // 拡張子がmdでない場合
+  if (typeof path === 'string' && path?.split('.').pop() !== 'md') {
+    return {
+      props: {
+        path: null,
+        initialData: null,
+        forbidden: true,
+      },
+    };
+  }
 
   const initialData: GetResOk = await fetch(
     `${process.env.HTTPS_URL}/api/get-github?path=${path}`,

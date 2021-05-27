@@ -24,9 +24,8 @@ import {
 } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { InputControl, SubmitButton } from 'formik-chakra-ui';
+import { CheckboxControl, InputControl, SubmitButton } from 'formik-chakra-ui';
 import { GetResOk } from '@/models/github';
-import LinkChakra from '../common/link-chakra';
 import { useAuthentication } from '@/hooks/authentication';
 import ReactMarkdown from 'react-markdown';
 import { useRouter } from 'next/router';
@@ -85,7 +84,7 @@ const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }
       title: '編集が反映されました',
       status: 'success',
     });
-    router.push('/editor/success');
+    router.push(`/editor/success?path=${path}`);
   };
 
   /* -------------------------
@@ -123,12 +122,14 @@ const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }
   const [sending, setSending] = useState(false);
   const initialValues = {
     message: '',
+    agreed: false,
   };
   const validation = Yup.object({
     message: Yup.string()
       .required('コミットメッセージは必須です')
       .min(5, '短すぎます')
       .max(70, '長すぎます'),
+    agreed: Yup.bool().required('利用規約に同意いただかない場合は利用できません'),
   });
 
   const handleSubmit = (commitMessage: string) => {
@@ -188,12 +189,7 @@ const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }
   return (
     <>
       <Stack spacing={6}>
-        {path && (
-          <Button as={LinkChakra} isExternal href={data?.html_url}>
-            GitHubで見る
-          </Button>
-        )}
-        <Box>
+        <Stack spacing={3}>
           <Heading>自分の編集中のファイル</Heading>
           <Badge>SHA: {initialData.sha} </Badge>
           <MDEditor
@@ -203,9 +199,9 @@ const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }
               remarkPlugins: [gfm],
             }}
           />
-        </Box>
+        </Stack>
         {isConflict && (
-          <Stack>
+          <Stack spacing={3}>
             <Heading>現在のGitHubのファイル</Heading>
             <Badge>SHA: {data?.sha} </Badge>
             {/* 現在のGitHubの内容 */}
@@ -238,14 +234,18 @@ const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }
                   </Checkbox>
                 </Box>
               )}
+              <CheckboxControl name="agreed" isChecked={values.agreed} value="agreed">
+                利用規約に同意しました
+              </CheckboxControl>
               <>
-                {initialData.content && (
+                {initialData.content && values.agreed && (
                   <>
                     {resolvedConflict && (
                       <SubmitButton isLoading={sending}>
                         {isConflict && '矛盾が解決したので'}GitHubに反映させる
                       </SubmitButton>
                     )}
+                    {resolvedConflict && <Badge>ボタンを押すと、全文が上書きされます。</Badge>}
                     {errorString.length > 0 && <Code colorScheme="red">{errorString}</Code>}
                   </>
                 )}

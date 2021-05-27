@@ -63,6 +63,12 @@ const updateFile = functions
       });
     }
 
+    if (typeof parsedBody.path === 'string' && parsedBody.path?.split('.').pop() !== 'md') {
+      return response.status(403).json({
+        message: `This file is not allowed to edit`,
+      });
+    }
+
     if (!parsedBody.path.startsWith('/')) {
       return response.status(500).json({
         message: `Path must starts with slash`,
