@@ -16,6 +16,11 @@ export function useAuthentication() {
       return;
     }
 
+    firebase
+      .auth()
+      .signInAnonymously()
+      .catch((e) => console.error(e));
+
     firebase.auth().onAuthStateChanged(async (firebaseUser) => {
       if (firebaseUser) {
         const loginUser: User = {
