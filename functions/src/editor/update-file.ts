@@ -1,4 +1,5 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import { AdminConfig } from '../models/admin-config';
 import { UpdateBody } from '../models/editor';
 const adminConfig = functions.config() as AdminConfig;
@@ -11,11 +12,32 @@ const updateFile = functions
   .https.onRequest(async (request, response: any) => {
     const secret = request.headers.authorization as string;
 
-    if (secret !== adminConfig.docusaurus.auth) {
-      functions.logger.error('Detected access with invalid token');
-      return response.status(401).json({
-        message: 'Invalid token',
-      });
+    // https://github.com/firebase/functions-samples/blob/master/authorized-https-endpoint/functions/index.js
+    // トークンを確認
+    if (
+      (!secret || !secret.startsWith('Bearer ')) &&
+      !(request.cookies && request.cookies.__session)
+    ) {
+      functions.logger.error('Detected invalid access');
+      return response.status(403).json({ message: 'Unauthorized' });
+    }
+
+    let idToken;
+    if (secret && secret.startsWith('Bearer ')) {
+      idToken = secret.split('Bearer ')[1];
+    } else if (request.cookies) {
+      idToken = request.cookies.__session;
+    } else {
+      // No cookie
+      functions.logger.error('Detected invalid access');
+      return response.status(403).json({ message: 'Unauthorized' });
+    }
+
+    try {
+      await admin.auth().verifyIdToken(idToken);
+    } catch (error) {
+      functions.logger.error('Error while verifying Firebase ID token:', error);
+      return response.status(403).json({ message: 'Unauthorized' });
     }
 
     if (request.method !== 'PUT') {
@@ -180,9 +202,7 @@ const updateFile = functions
           });
       })
       .catch((e) => {
-        return response
-          .status(500)
-          .json({ error: e, messageFromFunction: `Error on fetching file` });
+        return response.status(500).json({ error: e, message: `Error on fetching file` });
       });
   });
 

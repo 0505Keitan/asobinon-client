@@ -1,3 +1,4 @@
+import { getIdToken } from '@/lib/firebase';
 import { useEffect, useState } from 'react';
 import MDEditor from '@namskiiiii/react-md-editor-naked';
 import '@namskiiiii/react-md-editor-naked/dist/markdown-editor.css';
@@ -34,7 +35,7 @@ import { useRouter } from 'next/router';
 const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }) => {
   const router = useRouter();
   const [errorString, setErrorString] = useState('');
-  const { user } = useAuthentication();
+
   const toast = useToast();
   let decoded = '';
   const [md, setMd] = useState(decoded);
@@ -42,6 +43,11 @@ const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }
     decoded = decode(initialData.content);
     setMd(decoded);
   }, [initialData.content.length > 0]);
+
+  /*------------------------------
+  ユーザーIDを認証
+  ------------------------------*/
+  const { user } = useAuthentication();
 
   /* ------------------------------
   GitHubから取得
@@ -143,7 +149,9 @@ const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }
     agreed: Yup.bool().required('利用規約に同意いただかない場合は利用できません'),
   });
 
-  const handleSubmit = (commitMessage: string) => {
+  const handleSubmit = async (commitMessage: string) => {
+    const idToken = await getIdToken();
+    console.debug({ id: idToken });
     const body = {
       message: '[編集支援サイト] ' + commitMessage,
       path: path,
@@ -159,7 +167,7 @@ const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }
     fetch(`${process.env.HTTPS_URL}/api/edit`, {
       method: 'PUT',
       headers: {
-        Authorization: process.env.FUNCTIONS_AUTH ?? '',
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify(body),
     })

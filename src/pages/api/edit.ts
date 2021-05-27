@@ -2,18 +2,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function edit(request: NextApiRequest, response: NextApiResponse) {
   const secret = request.headers.authorization as string | undefined;
-
-  if (!secret || secret !== process.env.FUNCTIONS_AUTH) {
-    return response.status(401).json({
-      message: 'Invalid token',
-    });
-  }
-
+  // ここではFirebaseのIDトークンをそのまま送る
   return await fetch(`${process.env.FUNCTIONS_URL}/editor-updateFile`, {
     method: 'PUT',
     body: request.body ?? '',
     headers: {
-      Authorization: secret,
+      Authorization: secret ?? '',
     },
   })
     .then(async (res) => {
