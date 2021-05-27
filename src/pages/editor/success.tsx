@@ -1,37 +1,43 @@
-import { Box, Button, Heading, Stack, Stat, StatHelpText, StatNumber } from '@chakra-ui/react';
+import { Box, Button, Heading, Stack } from '@chakra-ui/react';
 import Layout from '@/components/layout';
 import { GetServerSidePropsContext } from 'next';
 import LinkChakra from '@/components/common/link-chakra';
-import { useEffect, useState } from 'react';
+import SlideShow from '@/components/common/slide-show';
 
 const SuccessPage = ({ path }: { path: string | null }) => {
+  // 段階に応じてカウントを分割
+
   const title = '編集完了!';
-  const [count, setCount] = useState(60);
-  useEffect(() => {
-    count > 0 &&
-      setTimeout(() => {
-        setCount(count - 1);
-      }, 1000);
-  }, [count]);
   if (typeof path === 'string') {
-    const actualPath = process.env.DOCS_URL + path.replace(`.md`, '').replace(/[0-9]\-/g, '');
+    const actualPath =
+      process.env.DOCS_URL +
+      path
+        .replace('/docs', '')
+        .replace('index.md', '')
+        .replace(`.md`, '')
+        .replace(/[0-9]\-/g, '');
     return (
       <Layout meta={{ title: title, desc: '編集が完了しました' }}>
-        <Heading as="h1">{title}</Heading>
+        <Stack spacing={6}>
+          <Heading as="h1">{title}</Heading>
+          <SlideShow
+            initialCount={35}
+            contents={[
+              '更新開始...',
+              'GitHubからサーバーへ転送中...',
+              'サーバーが読み取り中...',
+              'パッケージをインストール中...',
+              '構文をチェック中...',
+              '(ここでHTMLがおかしいと止まります)',
+              '(HTMLがOKなら)ビルド完了...',
+              '(HTMLがOKなら)デプロイ中...',
+              '(HTMLがOKなら)DONE!',
+            ]}
+          />
 
-        <Stack>
-          <Box>変更の反映には1分ほど時間がかかります</Box>
-          <Stat>
-            <StatNumber>{count}</StatNumber>
-            <StatHelpText>
-              {count == 0 ? 'おそらく反映されました' : '0になるまで待ってね!'}
-            </StatHelpText>
-          </Stat>
-          {count == 0 && (
-            <Button as={LinkChakra} isExternal href={actualPath}>
-              編集が反映されたか見にいく
-            </Button>
-          )}
+          <Button as={LinkChakra} isExternal href={actualPath}>
+            編集が反映されたか見にいく
+          </Button>
         </Stack>
       </Layout>
     );
