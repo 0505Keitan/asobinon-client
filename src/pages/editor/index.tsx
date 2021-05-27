@@ -19,12 +19,13 @@ import CreateIssue from '@/components/common/create-issue';
 import LinkChakra from '../../components/common/link-chakra';
 import Layout from '../../components/layout';
 import { GetServerSidePropsContext } from 'next';
+import { GetResOk } from '@/models/github';
 
 /*
 このページは「このページを編集」からクエリ付きでアクセスする前提
 */
 
-const EditorPage = ({ path }: { path: string }) => {
+const EditorPage = ({ path, initialData }: { path: string; initialData: GetResOk | null }) => {
   const title = `編集補助ページ (編集対象:${path})`;
   const repoUrl = process.env.DOCS_REPOSITORY_URL;
   if (!repoUrl) {
@@ -62,7 +63,11 @@ const EditorPage = ({ path }: { path: string }) => {
           <TabPanels>
             <TabPanel>
               <Stack spacing={6}>
-                <EditorV1 path={path} />
+                {initialData && initialData.content ? (
+                  <EditorV1 path={path} initialData={initialData} />
+                ) : (
+                  <Box>Loading...</Box>
+                )}
               </Stack>
             </TabPanel>
             <TabPanel>
@@ -146,9 +151,21 @@ export default EditorPage;
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const path = context.query.path;
+
+  const initialData: GetResOk = await fetch(
+    `${process.env.HTTPS_URL}/api/get-github?path=${path}`,
+    {
+      headers: {
+        Authorization: process.env.FUNCTIONS_AUTH ?? '',
+      },
+    },
+  )
+    .then((res) => res.json())
+    .catch((e) => console.error(e));
   return {
     props: {
       path: path ?? null,
+      initialData: initialData ?? null,
     },
   };
 };

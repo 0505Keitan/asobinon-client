@@ -18,22 +18,38 @@ import {
   ModalFooter,
   ModalBody,
   Button,
+  Heading,
+  Checkbox,
+  Flex,
 } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { InputControl, SubmitButton } from 'formik-chakra-ui';
 import { GetResOk } from '@/models/github';
 import LinkChakra from '../common/link-chakra';
+import { useAuthentication } from '@/hooks/authentication';
+import ReactMarkdown from 'react-markdown';
+import { useRouter } from 'next/router';
 
-const EditorV1 = ({ path }: { path: string }) => {
-  const toast = useToast();
-
+// InitialDataはGetServerSidePropsでページロード時に取得
+const EditorV1 = ({ path, initialData }: { path: string; initialData: GetResOk }) => {
+  const router = useRouter();
   const [errorString, setErrorString] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuthentication();
+  const toast = useToast();
+  let decoded = '';
+  const [md, setMd] = useState(decoded);
+  useEffect(() => {
+    decoded = decode(initialData.content);
+    setMd(decoded);
+  }, [initialData.content.length > 0]);
+
+  /* ------------------------------
+  GitHubから取得
+  ------------------------ */
 
   const fetcher = async (path: string) => {
     console.debug(`Triggering fetcher`);
-    setLoading(true);
 
     const result: GetResOk = await fetch(`${process.env.HTTPS_URL}/api/get-github?path=${path}`, {
       headers: {
@@ -41,11 +57,9 @@ const EditorV1 = ({ path }: { path: string }) => {
       },
     })
       .then(async (res) => {
-        console.info(`%cInitial data loaded`, `font-weight:bold`);
+        console.info(`%cData fetched`, `font-weight:bold`);
 
-        setLoading(false);
         const data = await res.json();
-        console.log(data);
         return data;
       })
       .catch((e) => console.error(e));
@@ -53,17 +67,54 @@ const EditorV1 = ({ path }: { path: string }) => {
     return result;
   };
 
-  // これが入力中のMarkdown
-  const { data } = useSWR(`${path}`, (path) => fetcher(path), {
+  const { data, mutate } = useSWR(`${path}`, (path) => fetcher(path), {
     refreshInterval: 0,
     revalidateOnFocus: false,
   });
-  const decoded = decode(data?.content ?? '');
-  const [md, setMd] = useState(decoded);
 
+  const dataDecoded = decode(data?.content ?? '');
+
+  // 矛盾をチェック
+  const [isConflict, setIsConflict] = useState(false);
+
+  /*-------------------------------
+  編集成功
+  -------------------------------*/
+  const handleSuccess = () => {
+    toast({
+      title: '編集が反映されました',
+      status: 'success',
+    });
+    router.push('/editor/success');
+  };
+
+  /* -------------------------
+  Conflictしたとき
+  ------------------- */
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  // 解決したらチェック(ページロード時は解決したことになっている)
+  const [resolvedConflict, setResolvedConflict] = useState(true);
+  const toggleResolved = () => setResolvedConflict(!resolvedConflict);
+
+  // 随時チェック
   useEffect(() => {
-    setMd(decoded);
-  }, [data]);
+    if (initialData.sha !== data?.sha) {
+      setResolvedConflict(false);
+      setIsConflict(true);
+    } else {
+      setResolvedConflict(true);
+      setIsConflict(false);
+    }
+  }, [data?.sha]);
+
+  const handleConflict = () => {
+    setErrorString('他の人が行った編集を、うまく自分の内容と合成してください。');
+    setResolvedConflict(false);
+    // ここで下のMarkdownが更新される
+    mutate();
+    // モーダル
+    onOpen();
+  };
 
   /*-------------------------
    Form
@@ -77,45 +128,74 @@ const EditorV1 = ({ path }: { path: string }) => {
     message: Yup.string()
       .required('コミットメッセージは必須です')
       .min(5, '短すぎます')
-      .max(80, '長すぎます'),
+      .max(70, '長すぎます'),
   });
 
-  /* -------------------------
-  Conflictしたとき
-  ------------------- */
-  const [isConflict, setIsConflict] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  // 矛盾した時に取得
-  const currentData = () => {
-    try {
-      const { data, error, mutate } = useSWR(`${path}_CONFLICT`, (path) => fetcher(path), {
-        refreshInterval: 0,
-        revalidateOnFocus: false,
+  const handleSubmit = (commitMessage: string) => {
+    const body = {
+      message: '[編集支援サイト] ' + commitMessage,
+      path: path,
+      content: md,
+      committer: {
+        name: `${user.name}`,
+        email: `asobinon-editor-uid-${user.uid}@asobinon.org`,
+      },
+      // 解決しない限りは前のshaを送る
+      sha: resolvedConflict ? data?.sha : initialData.sha,
+    };
+    setSending(true);
+    fetch(`${process.env.HTTPS_URL}/api/edit`, {
+      method: 'PUT',
+      headers: {
+        Authorization: process.env.FUNCTIONS_AUTH ?? '',
+      },
+      body: JSON.stringify(body),
+    })
+      .then(async (res) => {
+        setSending(false);
+        // 201はファイル作成
+        if (res.status == (200 || 201)) {
+          handleSuccess();
+        } else {
+          // shaが矛盾すると409 Conflictになる
+          if (res.status == 409) {
+            handleConflict();
+          } else {
+            const data = await res.json();
+            setErrorString(data.message ?? '内部のAPIからエラー理由が帰って来ませんでした');
+            toast({
+              title: '送信に失敗しました',
+              description: errorString,
+              status: 'error',
+            });
+          }
+        }
+      })
+      .catch((e) => {
+        setErrorString(
+          e.message ?? '内部でエラーが発生しました。運営に教えていただけると助かります',
+        );
+        toast({
+          title: '送信に失敗しました',
+          description: errorString,
+          status: 'error',
+        });
       });
-      return { data: data, error: error, mutate: mutate };
-    } catch (e) {
-      console.error(e);
-    }
-  };
-  const toggleConflictView = () => {
-    currentData()?.mutate();
-    setIsConflict(true);
-    setErrorString('矛盾を修復してください。');
   };
 
   /*-----------------------------------*/
 
   return (
     <>
-      {loading ? (
-        <Box>Loading...</Box>
-      ) : (
-        <Stack spacing={6}>
-          {path && (
-            <Button as={LinkChakra} isExternal href={data?.html_url}>
-              GitHubで見る
-            </Button>
-          )}
+      <Stack spacing={6}>
+        {path && (
+          <Button as={LinkChakra} isExternal href={data?.html_url}>
+            GitHubで見る
+          </Button>
+        )}
+        <Box>
+          <Heading>自分の編集中のファイル</Heading>
+          <Badge>SHA: {initialData.sha} </Badge>
           <MDEditor
             value={md}
             onChange={(current) => setMd(current ?? '')}
@@ -123,110 +203,80 @@ const EditorV1 = ({ path }: { path: string }) => {
               remarkPlugins: [gfm],
             }}
           />
-          <Formik
-            onSubmit={(values) => {
-              const body = {
-                message: values.message,
-                path: path,
-                content: md,
-                committer: {
-                  name: `asobinon`,
-                  email: `sasigume+test@gmail.com`,
-                },
-                sha: data?.sha,
-              };
-              setSending(true);
-              fetch(`${process.env.HTTPS_URL}/api/edit`, {
-                method: 'PUT',
-                headers: {
-                  Authorization: process.env.FUNCTIONS_AUTH ?? '',
-                },
-                body: JSON.stringify(body),
-              })
-                .then(async (res) => {
-                  setSending(false);
-                  // 201はファイル作成
-                  if (res.status == (200 || 201)) {
-                    toast({
-                      title: '編集が反映されました',
-                      status: 'success',
-                    });
-                  } else {
-                    // shaが矛盾すると409 Conflictになる
-                    if (res.status == 409) {
-                      // モーダル
-                      onOpen();
-                    } else {
-                      const data = await res.json();
-                      setErrorString(
-                        data.message ?? '内部のAPIからエラー理由が帰って来ませんでした',
-                      );
-                      toast({
-                        title: '送信に失敗しました',
-                        description:
-                          data.message ?? '内部のAPIからエラー理由が帰って来ませんでした',
-                        status: 'error',
-                      });
-                    }
-                  }
-                })
-                .catch((e) => {
-                  setErrorString(e.message ?? JSON.stringify(e));
-                  toast({
-                    title: '送信に失敗しました',
-                    description: JSON.stringify(e),
-                    status: 'error',
-                  });
-                });
-            }}
-            validationSchema={validation}
-            initialValues={initialValues}
-          >
-            {({ errors, values, handleSubmit }) => (
-              <Stack as="form" onSubmit={handleSubmit as any}>
+        </Box>
+        {isConflict && (
+          <Stack>
+            <Heading>現在のGitHubのファイル</Heading>
+            <Badge>SHA: {data?.sha} </Badge>
+            {/* 現在のGitHubの内容 */}
+            <Flex gridGap={3}>
+              <Code p={3}>{dataDecoded}</Code>
+              <Box p={3} borderWidth={1} borderColor="gray.500">
+                <ReactMarkdown remarkPlugins={[gfm]}>{dataDecoded}</ReactMarkdown>
+              </Box>
+            </Flex>
+          </Stack>
+        )}
+        <Formik
+          onSubmit={(values) => {
+            handleSubmit(values.message);
+          }}
+          validationSchema={validation}
+          initialValues={initialValues}
+        >
+          {({ values, handleSubmit }) => (
+            <Stack as="form" onSubmit={handleSubmit as any}>
+              <Box>
+                <InputControl name="message" />
+
+                <Badge>{values.message.length}文字</Badge>
+              </Box>
+              {isConflict && (
                 <Box>
-                  <InputControl name="message" label="コミットメッセージ" />
-                  <Badge>{values.message.length}文字</Badge>
+                  <Checkbox isChecked={resolvedConflict} onChange={toggleResolved}>
+                    矛盾が解決しました
+                  </Checkbox>
                 </Box>
-                {!isConflict && (
+              )}
+              <>
+                {initialData.content && (
                   <>
-                    {!errors.message && (
-                      <SubmitButton isLoading={sending}>GitHubに反映させる</SubmitButton>
+                    {resolvedConflict && (
+                      <SubmitButton isLoading={sending}>
+                        {isConflict && '矛盾が解決したので'}GitHubに反映させる
+                      </SubmitButton>
                     )}
                     {errorString.length > 0 && <Code colorScheme="red">{errorString}</Code>}
                   </>
                 )}
-                {isConflict && <Box>{currentData()?.data?.content}</Box>}
-              </Stack>
-            )}
-          </Formik>
-          {/* Conflictすると開く。コピーすると追加でロード */}
-          <Modal isOpen={isOpen} onClose={() => {}}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>他の人がファイルを編集しました</ModalHeader>
-              <ModalBody>
-                <Box>以下のボタンを押すと、比較画面が出ます。</Box>
-                {/* ここに案内画像 */}
-                <Box>自分の書いた部分と比べて、相手の編集と矛盾をなくしてください。</Box>
-              </ModalBody>
+              </>
+            </Stack>
+          )}
+        </Formik>
+        {/* Conflictすると開く。コピーすると追加でロード */}
+        <Modal isOpen={isOpen} onClose={() => {}}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>他の人がファイルを編集しました</ModalHeader>
+            <ModalBody>
+              {/* ここに案内画像 */}
+              <Box>自分の書いた部分と比べて、相手の編集と矛盾をなくしてください。</Box>
+            </ModalBody>
 
-              <ModalFooter>
-                <Button
-                  colorScheme="blue"
-                  mr={3}
-                  onClick={() => {
-                    toggleConflictView;
-                    onClose;
-                  }}
-                >
-                  わかりました
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </Stack>
-      )}
+            <ModalFooter>
+              <Button
+                colorScheme="blue"
+                mr={3}
+                onClick={() => {
+                  onClose();
+                }}
+              >
+                わかりました
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Stack>
     </>
   );
 };

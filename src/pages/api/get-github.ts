@@ -10,7 +10,11 @@ export default async function getGithub(request: NextApiRequest, response: NextA
     });
   }
 
-  return await fetch(`https://api.github.com/repos/aelyone/aelyone-github-api-test/contents${path}`)
+  return await fetch(`${process.env.FUNCTIONS_URL}/editor-fetchGitHub?path=${path}`, {
+    headers: {
+      Authorization: secret,
+    },
+  })
     .then(async (res) => {
       const data = await res.json();
       if (res.ok) {

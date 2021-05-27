@@ -127,6 +127,7 @@ const updateFile = functions
           },
           body: JSON.stringify(requestBody(prev.sha)),
         };
+        functions.logger.debug(JSON.stringify(postOptions.body));
 
         // shaが違うと 409 Conflictになる
         await fetch(api, postOptions)
