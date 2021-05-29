@@ -73,7 +73,7 @@ const contactWithMailjet = functions
             title: '【ASOBINON】お問い合わせについてのご案内',
             content: `お問い合わせいただきありがとうございます。返信までお時間をいただくかもしれませんが、ご了承ください。\n\nお問い合わせ内容:\n${
               parsedBody.text ?? ''
-            }\n\nお問い合わせID: ${docId}\n\n---\nイマイク代表 安藤 諒 (Ryo Ando)\nsasigume@gmail.com`,
+            }\n\nお問い合わせID: ${docId}\n\n---\n安藤 諒 (Ryo Ando)\nsasigume@gmail.com`,
             from: adminConfig.mail.sender ?? 'functions-from-not-set@sasigu.me',
             fromName: 'ASOBINON 運営チーム・お問い合わせ部門',
             to: parsedBody.email,
