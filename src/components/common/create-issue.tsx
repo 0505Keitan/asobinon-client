@@ -1,4 +1,4 @@
-// https://github.com/aelyone/asobinon/issues/new/choose
+// https://github.com/sasigume/asobinon/issues/new/choose
 
 import { Button, ButtonProps } from '@chakra-ui/button';
 import LinkChakra from './link-chakra';

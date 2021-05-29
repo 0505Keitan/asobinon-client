@@ -143,7 +143,7 @@ export default EditDocsPage;
 
 export const getServerSideProps = async ({ query }: GetServerSidePropsContext) => {
   /*
-  https://github.com/aelyone/asobinon/blob/main/website/docusaurus.config.js
+  https://github.com/sasigume/asobinon/blob/main/website/docusaurus.config.js
   編集リンクから「/docs/XXX」が渡される
   */
   const path = query.path;

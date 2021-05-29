@@ -100,7 +100,7 @@ const updateFile = functions
     // スラッシュがエンコードされないように
     const afterSlash = parsedBody.path.substring(1);
 
-    const api = `https://api.github.com/repos/aelyone/asobinon/contents/website/${encodeURIComponent(
+    const api = `https://api.github.com/repos/sasigume/asobinon/contents/website/${encodeURIComponent(
       afterSlash,
     )}`;
     // 本文をエンコード
