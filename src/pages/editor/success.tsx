@@ -20,6 +20,10 @@ const SuccessPage = ({ path }: { path: string | null }) => {
       <Layout meta={{ title: title, desc: '編集が完了しました' }}>
         <Stack spacing={6}>
           <Heading as="h1">{title}</Heading>
+          <Box bg="red" color="white" p={3} fontWeight="bold">
+            注意! 1日に「サイトが」更新される回数の上限は「100回」です!
+            ソースコードは更新されているので、明日になればサイトに反映されます。
+          </Box>
           <SlideShow
             initialCount={45}
             contents={[
