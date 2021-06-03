@@ -1,6 +1,6 @@
 {
   "name": "asobinon-client",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "scripts": {
     "dev": "next -p 3001",
     "build": "next build",
