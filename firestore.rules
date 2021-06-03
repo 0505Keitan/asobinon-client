@@ -20,6 +20,10 @@ service cloud.firestore {
       allow delete: if request.auth.uid == uid;
       allow get, update, write, create, read: if true;
     }
+    match /feedback_v2/{feedbackId} {
+      allow delete: if request.auth.uid == uid;
+      allow get, update, write, create, read: if true;
+    }
     match /contacts/{contactId} {
       allow get, read, create, write: if true
         //request.auth.uid == resource.data.senderUid ||

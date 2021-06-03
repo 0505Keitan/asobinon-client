@@ -48,7 +48,7 @@ const updateFile = functions
 
     const body = await request.body;
     if (Object.keys(body).length === 0) {
-      return response.status(500).json({
+      return response.status(422).json({
         message: `Please specify body`,
       });
     }
@@ -56,13 +56,13 @@ const updateFile = functions
     const parsedBody = JSON.parse(body) as UpdateBody;
 
     if (!parsedBody.committer) {
-      return response.status(500).json({
+      return response.status(422).json({
         message: `Please specify committer`,
       });
     }
 
     if (!parsedBody.message) {
-      return response.status(500).json({
+      return response.status(422).json({
         message: `Please specify message`,
       });
     }
@@ -74,13 +74,13 @@ const updateFile = functions
     }
 
     if (!parsedBody.content) {
-      return response.status(500).json({
+      return response.status(422).json({
         message: `Please specify content`,
       });
     }
 
     if (!parsedBody.path) {
-      return response.status(500).json({
+      return response.status(422).json({
         message: `Please specify path`,
       });
     }

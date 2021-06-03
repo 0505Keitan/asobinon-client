@@ -96,6 +96,14 @@ export default function Nav() {
                   トップ
                 </Button>
                 <Button
+                  leftIcon={<FaiconDiv icon={['fas', 'thumbs-down']} />}
+                  as={LinkChakra}
+                  href="/feedback/list"
+                >
+                  対応が必要なページ
+                </Button>
+
+                <Button
                   leftIcon={<FaiconDiv icon={['fas', 'comment-alt']} />}
                   as={LinkChakra}
                   href="/contact"
