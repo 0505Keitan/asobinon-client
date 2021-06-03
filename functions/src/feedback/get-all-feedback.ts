@@ -24,7 +24,8 @@ const getAllFeedback = functions
     }
 
     try {
-      const dataArray = await COLLECTION_FEEDBACK_V2.orderBy('good', 'desc')
+      const dataArray = await COLLECTION_FEEDBACK_V2.orderBy('bad', 'desc')
+        .limit(10)
         .get()
         .then((query) => {
           return query.docs.map((doc) => {
