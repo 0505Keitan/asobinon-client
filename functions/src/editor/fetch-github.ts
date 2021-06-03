@@ -24,7 +24,7 @@ const fetchGitHub = functions
     }
 
     if (!path) {
-      return response.status(500).json({
+      return response.status(422).json({
         message: `Please specify path`,
       });
     }
@@ -33,7 +33,6 @@ const fetchGitHub = functions
     const api = `https://api.github.com/repos/sasigume/asobinon/contents/website/${encodeURIComponent(
       afterSlash,
     )}`;
-    functions.logger.debug(`Func api: ${api}`);
 
     await fetch(api, {
       method: 'GET',
