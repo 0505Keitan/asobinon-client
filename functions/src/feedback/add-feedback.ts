@@ -4,7 +4,7 @@ import { AdminConfig } from '../models/admin-config';
 const adminConfig = functions.config() as AdminConfig;
 import fetch from 'node-fetch';
 import { GetResponse } from '../models/github';
-import { COLLECTION_FEEDBACK_V2 } from '../lib/firestore';
+import { COLLECTION_FEEDBACK_V2, REPLACE_SLASH } from '../lib/firestore';
 
 const addFeedback = functions
   .region('asia-northeast1')
@@ -56,7 +56,7 @@ const addFeedback = functions
         const data: GetResponse = await res.json();
         if (res.ok) {
           // スラッシュは使えないのでとりあえず置換する
-          const docName = path.replace(/\//g, '_(slash)_');
+          const docName = path.replace(/\//g, REPLACE_SLASH);
           const docRef = COLLECTION_FEEDBACK_V2.doc(docName);
 
           // GOOD/BADでフィールドを切り替える
