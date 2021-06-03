@@ -1,5 +1,5 @@
-import * as functions from "firebase-functions";
-import { AdminConfig } from "../models/admin-config";
+import * as functions from 'firebase-functions';
+import { AdminConfig } from '../models/admin-config';
 const adminConfig = functions.config() as AdminConfig;
 
 interface Options {
@@ -11,18 +11,18 @@ interface Options {
 }
 
 export async function MailJet(options: Options) {
-  const mailjet = require("node-mailjet").connect(
+  const mailjet = require('node-mailjet').connect(
     adminConfig.mailjet.key,
-    adminConfig.mailjet.secret
+    adminConfig.mailjet.secret,
   );
 
-  var sendEmail = mailjet.post("send");
+  var sendEmail = mailjet.post('send');
 
   var emailData = {
     FromEmail: options.from,
     FromName: options.fromName,
     Subject: options.title,
-    "Text-part": options.content,
+    'Text-part': options.content,
     Recipients: [{ Email: options.to }],
   };
   type Error = {
@@ -30,7 +30,7 @@ export async function MailJet(options: Options) {
   };
   sendEmail
     .request(emailData)
-    .then(functions.logger.info("Mail send to " + options.to))
+    .then(functions.logger.info('Mail send to ' + options.to))
     .catch(function (error: Error) {
       throw new Error(error.ErrorMessage);
     });
