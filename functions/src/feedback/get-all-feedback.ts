@@ -29,10 +29,13 @@ const getAllFeedback = functions
         .then((query) => {
           return query.docs.map((doc) => {
             const data = doc.data() as Feedback;
+
+            // 置換した奴にカッコとかあったら使えないのでエスケープする
+            const reg = new RegExp(REPLACE_SLASH.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), 'g');
             return {
               ...data,
               // パスが付いていないのでここで追加する
-              path: doc.id.replace(REPLACE_SLASH, '/'),
+              path: doc.id.replace(reg, '/'),
             };
           });
         });
