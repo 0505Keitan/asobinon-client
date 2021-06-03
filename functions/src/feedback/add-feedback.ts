@@ -55,8 +55,8 @@ const addFeedback = functions
       .then(async (res) => {
         const data: GetResponse = await res.json();
         if (res.ok) {
-          // スラッシュは使えないのでとりあえずアンダースコアにする
-          const docName = path.replace(/\//g, '_');
+          // スラッシュは使えないのでとりあえず置換する
+          const docName = path.replace(/\//g, '_(slash)_');
           const docRef = COLLECTION_FEEDBACK_V2.doc(docName);
 
           // GOOD/BADでフィールドを切り替える
