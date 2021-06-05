@@ -18,12 +18,13 @@ const Law = ({ data, content }: PageProps) => (
 
 export default Law;
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const { data, content } = await getMd('law');
   return {
     props: {
       data: data ?? null,
       content: content ?? null,
     },
+    revalidate: false,
   };
 }
