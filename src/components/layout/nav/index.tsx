@@ -92,8 +92,12 @@ export default function Nav() {
               <CreateIssue />
 
               <Stack spacing={2}>
-                <Button as={LinkChakra} href="/">
-                  トップ
+                <Button
+                  leftIcon={<FaiconDiv icon={['fas', 'thumbs-up']} />}
+                  as={LinkChakra}
+                  href="/buy"
+                >
+                  支援する
                 </Button>
                 <Button
                   leftIcon={<FaiconDiv icon={['fas', 'thumbs-down']} />}
@@ -134,6 +138,9 @@ export default function Nav() {
                   isExternal
                 >
                   プライバシーポリシー
+                </Button>
+                <Button leftIcon={<FaiconDiv icon={['fas', 'book']} />} as={LinkChakra} href="/law">
+                  特定商取引法に基づく表示
                 </Button>
               </Stack>
             </Stack>

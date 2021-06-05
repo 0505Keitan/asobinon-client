@@ -1,4 +1,5 @@
 import { AppProps } from 'next/app';
+import '../styles/globals.css';
 import { RecoilRoot } from 'recoil';
 import { useEffect } from 'react';
 import NextNprogress from 'nextjs-progressbar';
@@ -6,7 +7,6 @@ import TagManager from 'react-gtm-module';
 import * as gtag from '@/lib/gtag';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
-
 dayjs.locale('ja');
 
 import '@/lib/firebase';
