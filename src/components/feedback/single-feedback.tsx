@@ -1,5 +1,4 @@
 import { Feedback } from '@/models/firestore/feedback';
-import { useColorMode } from '@chakra-ui/color-mode';
 import { Badge, Box, Flex, Stack } from '@chakra-ui/layout';
 import FaiconDiv from '../common/faicon-div';
 import LinkChakra from '../common/link-chakra';
