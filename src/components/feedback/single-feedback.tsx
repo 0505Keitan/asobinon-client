@@ -12,7 +12,6 @@ const SingleFeedback = ({ feedback }: { feedback: Feedback }) => {
   if (good + bad == 0) {
     noRatio = true;
   }
-  const { colorMode } = useColorMode();
 
   const actualPath =
     process.env.DOCS_URL +
@@ -23,8 +22,8 @@ const SingleFeedback = ({ feedback }: { feedback: Feedback }) => {
       .replace(/[0-9]\-/g, '');
 
   return (
-    <Stack p={3} bg={colorMode == 'light' ? 'gray.100' : 'gray.900'} spacing={4} rounded="xl">
-      <Box bg="gray.100" p={6} rounded="xl">
+    <Stack p={3} border="gray.500" shadow="lg" borderWidth={2} spacing={4} rounded="xl">
+      <Box>
         <LinkChakra isExternal href={actualPath}>
           <Badge textTransform="none">{actualPath}</Badge>
         </LinkChakra>
