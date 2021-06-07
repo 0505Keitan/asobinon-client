@@ -45,7 +45,7 @@ const EditorPage = ({ path }: { path: string }) => {
         .replace('index.md', '')
         .replace(`.md`, '')
         .replace(/[0-9]\-/g, '');
-    const editPath = process.env.DOCS_REPOSITORY_URL + '/edit/main/website' + path;
+    const editPath = process.env.DOCS_REPOSITORY_URL + '/edit/main' + path;
 
     return (
       <Layout meta={{ title: title, desc: '編集ページ' }}>

@@ -56,7 +56,7 @@ export default FeedBackPage;
 
 export const getServerSideProps = async ({ query }: GetServerSidePropsContext) => {
   /*
-  https://github.com/sasigume/asobinon/blob/main/website/src/components/docpage/rating.tsx
+  https://github.com/sasigume/asobinon/blob/main/src/components/docpage/rating.tsx
   フィードバックボタンから、pathとvalueが渡される
   */
   const path = query.path as string | undefined;

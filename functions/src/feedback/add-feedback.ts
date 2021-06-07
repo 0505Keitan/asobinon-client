@@ -40,7 +40,7 @@ const addFeedback = functions
     }
 
     const afterSlash = path.substring(1);
-    const api = `https://api.github.com/repos/sasigume/asobinon/contents/website/${encodeURIComponent(
+    const api = `https://api.github.com/repos/sasigume/asobinon/contents/${encodeURIComponent(
       afterSlash,
     )}`;
 

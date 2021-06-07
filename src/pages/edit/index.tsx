@@ -43,7 +43,7 @@ const EditDocsPage = ({ path }: PageProps) => {
 
     // 「2-」とかはURLにない
     const actualPath = process.env.DOCS_URL + path.replace(`.md`, '').replace(/[0-9]\-/g, '');
-    const editPath = process.env.DOCS_REPOSITORY_URL + '/edit/main/website' + path;
+    const editPath = process.env.DOCS_REPOSITORY_URL + '/edit/main' + path;
 
     return (
       <Layout meta={{ title: title, desc: '編集支援ページ' }}>
@@ -143,7 +143,7 @@ export default EditDocsPage;
 
 export const getServerSideProps = async ({ query }: GetServerSidePropsContext) => {
   /*
-  https://github.com/sasigume/asobinon/blob/main/website/docusaurus.config.js
+  https://github.com/sasigume/asobinon/blob/main/docusaurus.config.js
   編集リンクから「/docs/XXX」が渡される
   */
   const path = query.path;
