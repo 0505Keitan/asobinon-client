@@ -1,4 +1,5 @@
-import EditorV1 from '@/components/editor/editor-v1';
+//import EditorV1 from '@/components/editor/editor-v1';
+import EditorV2 from '@/components/editor/editor-v2';
 import {
   Button,
   Box,
@@ -62,15 +63,8 @@ const EditorPage = ({
 
     return (
       <Layout meta={{ title: title, desc: '編集ページ' }}>
-        <Stack spacing={6}>
+        <Stack spacing={3}>
           <Heading as="h1">{title}</Heading>
-
-          <Box my={6}>
-            <Heading as="h2">画像アップはこちら</Heading>
-            <Button as={LinkChakra} isExternal href="https://asobinon.org/ASOBINON/contribute/">
-              画像アップの方法
-            </Button>
-          </Box>
 
           {path.includes('/docs/') && (
             <Box bg="gray.100" p={6} rounded="xl">
@@ -81,6 +75,15 @@ const EditorPage = ({
             </Box>
           )}
 
+          <Button
+            colorScheme="green"
+            as={LinkChakra}
+            isExternal
+            href="https://asobinon.org/ASOBINON/contribute/"
+          >
+            画像アップの方法
+          </Button>
+
           <Tabs>
             <TabList>
               <Tab>今すぐ編集したい方</Tab>
@@ -90,7 +93,7 @@ const EditorPage = ({
               <TabPanel>
                 <Stack spacing={6}>
                   {initialData && initialData.content ? (
-                    <EditorV1 path={path} initialData={initialData} />
+                    <EditorV2 path={path} initialData={initialData} />
                   ) : (
                     <Box>ファイルの新規作成には対応していません</Box>
                   )}
