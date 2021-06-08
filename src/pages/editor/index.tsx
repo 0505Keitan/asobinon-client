@@ -63,15 +63,8 @@ const EditorPage = ({
 
     return (
       <Layout meta={{ title: title, desc: '編集ページ' }}>
-        <Stack spacing={6}>
+        <Stack spacing={3}>
           <Heading as="h1">{title}</Heading>
-
-          <Box my={6}>
-            <Heading as="h2">画像アップはこちら</Heading>
-            <Button as={LinkChakra} isExternal href="https://asobinon.org/ASOBINON/contribute/">
-              画像アップの方法
-            </Button>
-          </Box>
 
           {path.includes('/docs/') && (
             <Box bg="gray.100" p={6} rounded="xl">
@@ -81,6 +74,15 @@ const EditorPage = ({
               </LinkChakra>
             </Box>
           )}
+
+          <Button
+            colorScheme="green"
+            as={LinkChakra}
+            isExternal
+            href="https://asobinon.org/ASOBINON/contribute/"
+          >
+            画像アップの方法
+          </Button>
 
           <Tabs>
             <TabList>

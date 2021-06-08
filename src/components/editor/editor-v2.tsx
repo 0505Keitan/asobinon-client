@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import styles from './editor.module.css';
 
 // Editor
 import MDEditor from '@namskiiiii/react-md-editor-naked';
@@ -227,11 +226,39 @@ const EditorV2 = ({ path, initialData }: { path: string; initialData: GetResOk }
     <>
       <Stack spacing={6}>
         <Stack spacing={3}>
+          <Heading>編集上の注意</Heading>
+          <Box>
+            <p>
+              Markdownの上に「---」で囲まれた部分がありますが、それらのデータはプレビューに映りません。
+            </p>
+            <ul>
+              <li>
+                <Badge>title</Badge> : 記事のタイトル
+              </li>
+              <li>
+                <Badge>slug</Badge> : 記事のURL
+              </li>
+              <li>
+                <Badge>sidebar_position</Badge> : サイドバーでの位置
+              </li>
+            </ul>
+          </Box>
+          <Box>
+            <p>以下のブロックはプレビューに映りません。</p>
+            <ul>
+              <li>「:::XXXX」「:::」で囲まれた警告</li>
+              <li>YouTubeの埋め込み</li>
+              <li>GitHubの埋め込み</li>
+              <li>{`class="button button--primary"などが付いたリンク`}</li>
+            </ul>
+          </Box>
+        </Stack>
+        <Stack spacing={3}>
           <Heading>自分の編集中のファイル</Heading>
           <Badge>SHA: {initialData.sha} </Badge>
           <Box minH="100vh">
             <MDEditor
-              height="100vh"
+              height={1000}
               value={md}
               onChange={(current) => setMd(current ?? '')}
               previewOptions={{
