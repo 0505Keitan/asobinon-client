@@ -6,7 +6,8 @@ import MDEditor from '@namskiiiii/react-md-editor-naked';
 import '@namskiiiii/react-md-editor-naked/dist/markdown-editor.css';
 const gfm = require('remark-gfm');
 const matter = require('remark-frontmatter');
-const remarkPluginsCustomized = [gfm, [matter, ['yaml']]];
+const headingId = require('remark-heading-id');
+const remarkPluginsCustomized = [gfm, headingId, [matter, ['yaml']]];
 
 import {
   Badge,
